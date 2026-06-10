@@ -121,9 +121,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#F0F2FA;display:flex
   font-size:1.2rem;color:var(--mid);padding:2px 6px;
 }
 .topbar-badge{
-  font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;
+  font-size:.72rem;font-weight:700;padding:4px 12px;border-radius:20px;
   color:white;margin-left:auto;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:6px;line-height:1;
 }
+.topbar-badge i.ms-Icon{font-size:.8rem;flex-shrink:0}
 #topbar-title{font-size:.95rem;font-weight:700;color:var(--dark)}
 
 /* ── Welcome screen ── */
@@ -274,27 +276,27 @@ i.ms-Icon{display:inline-block;font-style:normal;vertical-align:middle;line-heig
 // CATEGORY & TREE DEFINITIONS
 // ================================================================
 const categories = [
-  { id:"communicatie", label:"Communiceren & Mailen", icon:"📁", color:"#0078D4", trees:["comm_mail_of_teams", "comm_vergadering"] },
-  { id:"opslaan", label:"Documenten & Opslaan", icon:"📁", color:"#0364B8", trees:["opslaan_waar", "opslaan_vinden"] },
-  { id:"samenwerken", label:"Samenwerken in Teams", icon:"📁", color:"#6264A7", trees:["samen_document", "samen_delen"] },
-  { id:"privacy", label:"Privacy & AVG", icon:"📁", color:"#D83B01", trees:["privacy_mag_ik", "privacy_extern"] },
-  { id:"structuur", label:"Teams-structuur", icon:"📁", color:"#038387", trees:["struct_kanaal", "struct_team"] },
-  { id:"herstel", label:"Versies & Herstel", icon:"📁", color:"#107C10", trees:["herstel_bestand", "herstel_versies"] }
+  { id:"communicatie", label:"Communiceren & Mailen", icon:"Chat", color:"#0078D4", trees:["comm_mail_of_teams", "comm_vergadering"] },
+  { id:"opslaan", label:"Documenten & Opslaan", icon:"Save", color:"#0364B8", trees:["opslaan_waar", "opslaan_vinden"] },
+  { id:"samenwerken", label:"Samenwerken in Teams", icon:"Teamwork", color:"#6264A7", trees:["samen_document", "samen_delen"] },
+  { id:"privacy", label:"Privacy & AVG", icon:"Shield", color:"#D83B01", trees:["privacy_mag_ik", "privacy_extern"] },
+  { id:"structuur", label:"Teams-structuur", icon:"Org", color:"#038387", trees:["struct_kanaal", "struct_team"] },
+  { id:"herstel", label:"Versies & Herstel", icon:"History", color:"#107C10", trees:["herstel_bestand", "herstel_versies"] }
 ];
 
 const treeLabels = {
-  "comm_mail_of_teams": { icon:"📄", label:"Mail of Teams-bericht?" },
-  "comm_vergadering": { icon:"📄", label:"Vergadering of bericht plannen?" },
-  "herstel_bestand": { icon:"📄", label:"Bestand verwijderd of fout bewerkt?" },
-  "herstel_versies": { icon:"📄", label:"Versies & co-authoring" },
-  "opslaan_waar": { icon:"📄", label:"Waar sla ik een document op?" },
-  "opslaan_vinden": { icon:"📄", label:"Bestand terugvinden" },
-  "privacy_mag_ik": { icon:"📄", label:"Mag ik dit via M365 versturen?" },
-  "privacy_extern": { icon:"📄", label:"Extern communiceren: wat mag?" },
-  "samen_document": { icon:"📄", label:"Samen aan een document werken" },
-  "samen_delen": { icon:"📄", label:"Document intern of extern delen" },
-  "struct_kanaal": { icon:"📄", label:"Kanaaltype kiezen" },
-  "struct_team": { icon:"📄", label:"Nieuw Team aanmaken?" }
+  "comm_mail_of_teams": { icon:"Mail", label:"Mail of Teams-bericht?" },
+  "comm_vergadering": { icon:"EventDate", label:"Vergadering of bericht plannen?" },
+  "herstel_bestand": { icon:"Delete", label:"Bestand verwijderd of fout bewerkt?" },
+  "herstel_versies": { icon:"History", label:"Versies & co-authoring" },
+  "opslaan_waar": { icon:"Save", label:"Waar sla ik een document op?" },
+  "opslaan_vinden": { icon:"Search", label:"Bestand terugvinden" },
+  "privacy_mag_ik": { icon:"ProtectedDocument", label:"Mag ik dit via M365 versturen?" },
+  "privacy_extern": { icon:"Globe", label:"Extern communiceren: wat mag?" },
+  "samen_document": { icon:"PageEdit", label:"Samen aan een document werken" },
+  "samen_delen": { icon:"Share", label:"Document intern of extern delen" },
+  "struct_kanaal": { icon:"Sections", label:"Kanaaltype kiezen" },
+  "struct_team": { icon:"AddGroup", label:"Nieuw Team aanmaken?" }
 };
 
 // ================================================================
@@ -303,7 +305,7 @@ const treeLabels = {
 const trees = {
 
 "comm_mail_of_teams": {
-  meta:{ title:"Mail of Teams-bericht?", subtitle:"Kies de juiste communicatievorm voor elk situatie", icon:"📄", iconBg:"#e0effa", color:"#0078D4", cat:"communicatie" },
+  meta:{ title:"Mail of Teams-bericht?", subtitle:"Kies de juiste communicatievorm voor elk situatie", icon:"Mail", iconBg:"#e0effa", color:"#0078D4", cat:"communicatie" },
   nodes:{
     "start":{ question:"Voor wie is het bericht bedoeld?", stepLabel:"Ontvanger", options:[
       { label:"Één collega", sub:"Eén-op-één communicatie", next:"een_persoon" },
@@ -337,7 +339,7 @@ const trees = {
 },
 
 "comm_vergadering": {
-  meta:{ title:"Vergadering of bericht plannen?", subtitle:"Voorkom onnodige meetings - kies de juiste werkvorm", icon:"📄", iconBg:"#e0effa", color:"#0078D4", cat:"communicatie" },
+  meta:{ title:"Vergadering of bericht plannen?", subtitle:"Voorkom onnodige meetings - kies de juiste werkvorm", icon:"EventDate", iconBg:"#e0effa", color:"#0078D4", cat:"communicatie" },
   nodes:{
     "start":{ question:"Wat wil je bereiken?", stepLabel:"Doel", options:[
       { label:"Afstemmen, beslissing nemen of overleggen", sub:"Interactie en reacties zijn nodig", next:"overleg" },
@@ -367,7 +369,7 @@ const trees = {
 },
 
 "herstel_bestand": {
-  meta:{ title:"Bestand verwijderd of fout bewerkt?", subtitle:"Stappen voor herstel via prullenbak of versiegeschiedenis", icon:"📄", iconBg:"#e2efe2", color:"#107C10", cat:"herstel" },
+  meta:{ title:"Bestand verwijderd of fout bewerkt?", subtitle:"Stappen voor herstel via prullenbak of versiegeschiedenis", icon:"Delete", iconBg:"#e2efe2", color:"#107C10", cat:"herstel" },
   nodes:{
     "start":{ question:"Wat is er precies aan de hand?", stepLabel:"Probleem", options:[
       { label:"Bestand per ongeluk verwijderd", next:"verwijderd_waar" },
@@ -390,7 +392,7 @@ const trees = {
 },
 
 "herstel_versies": {
-  meta:{ title:"Versies & co-authoring", subtitle:"Terugkeren naar eerder werk en conflicten oplossen", icon:"📄", iconBg:"#e2efe2", color:"#107C10", cat:"herstel" },
+  meta:{ title:"Versies & co-authoring", subtitle:"Terugkeren naar eerder werk en conflicten oplossen", icon:"History", iconBg:"#e2efe2", color:"#107C10", cat:"herstel" },
   nodes:{
     "start":{ question:"Wat wil je doen of oplossen?", stepLabel:"Doel", options:[
       { label:"Een oudere versie van een document terughalen", sub:"Ongedaan maken of terugkeren naar eerder werk", next:"versie_app" },
@@ -413,7 +415,7 @@ const trees = {
 },
 
 "opslaan_waar": {
-  meta:{ title:"Waar sla ik een document op?", subtitle:"Kies de juiste opslaglocatie voor elk type bestand", icon:"📄", iconBg:"#e1ecf6", color:"#0364B8", cat:"opslaan" },
+  meta:{ title:"Waar sla ik een document op?", subtitle:"Kies de juiste opslaglocatie voor elk type bestand", icon:"Save", iconBg:"#e1ecf6", color:"#0364B8", cat:"opslaan" },
   nodes:{
     "start":{ question:"Voor wie is dit document bedoeld?", stepLabel:"Doelgroep", options:[
       { label:"Alleen voor mijzelf", sub:"Persoonlijk werk, aantekeningen, concepten", next:"persoonlijk" },
@@ -449,7 +451,7 @@ const trees = {
 },
 
 "opslaan_vinden": {
-  meta:{ title:"Bestand terugvinden", subtitle:"Stap voor stap naar het juiste document", icon:"📄", iconBg:"#e1ecf6", color:"#0364B8", cat:"opslaan" },
+  meta:{ title:"Bestand terugvinden", subtitle:"Stap voor stap naar het juiste document", icon:"Search", iconBg:"#e1ecf6", color:"#0364B8", cat:"opslaan" },
   nodes:{
     "start":{ question:"Wat weet je nog over het bestand?", stepLabel:"Wat weet je nog?", options:[
       { label:"Ik heb het zelf gemaakt of bewerkt", sub:"Het stond in mijn OneDrive", next:"zelf" },
@@ -484,7 +486,7 @@ const trees = {
 },
 
 "privacy_mag_ik": {
-  meta:{ title:"Mag ik dit via M365 versturen?", subtitle:"AVG-check voor communicatie en opslag in de zorgsector", icon:"📄", iconBg:"#fae7e1", color:"#D83B01", cat:"privacy" },
+  meta:{ title:"Mag ik dit via M365 versturen?", subtitle:"AVG-check voor communicatie en opslag in de zorgsector", icon:"ProtectedDocument", iconBg:"#fae7e1", color:"#D83B01", cat:"privacy" },
   nodes:{
     "start":{ question:"Wat voor informatie wil je versturen of opslaan?", stepLabel:"Type informatie", options:[
       { label:"Patiëntgegevens (naam, BSN, diagnose, medicatie, zorgplan)", sub:"Bijzondere persoonsgegevens", next:"patient_data" },
@@ -516,7 +518,7 @@ const trees = {
 },
 
 "privacy_extern": {
-  meta:{ title:"Extern communiceren: wat mag?", subtitle:"Regels voor communicatie buiten de organisatie in de zorg", icon:"📄", iconBg:"#fae7e1", color:"#D83B01", cat:"privacy" },
+  meta:{ title:"Extern communiceren: wat mag?", subtitle:"Regels voor communicatie buiten de organisatie in de zorg", icon:"Globe", iconBg:"#fae7e1", color:"#D83B01", cat:"privacy" },
   nodes:{
     "start":{ question:"Met wie wil je extern communiceren?", stepLabel:"Type externe partij", options:[
       { label:"Patiënt of familie/mantelzorger", sub:"Directe zorgcommunicatie", next:"patient_comm" },
@@ -544,7 +546,7 @@ const trees = {
 },
 
 "samen_document": {
-  meta:{ title:"Samen aan een document werken", subtitle:"Co-authoring, reviews en goedkeuringen in M365", icon:"📄", iconBg:"#ececf4", color:"#6264A7", cat:"samenwerken" },
+  meta:{ title:"Samen aan een document werken", subtitle:"Co-authoring, reviews en goedkeuringen in M365", icon:"PageEdit", iconBg:"#ececf4", color:"#6264A7", cat:"samenwerken" },
   nodes:{
     "start":{ question:"Wat wil je doen?", stepLabel:"Samenwerkingsvorm", options:[
       { label:"Tegelijk samen bewerken (co-authoring)", sub:"Meerdere mensen werken tegelijk in het document", next:"coauth" },
@@ -574,7 +576,7 @@ const trees = {
 },
 
 "samen_delen": {
-  meta:{ title:"Document intern of extern delen", subtitle:"Kies het juiste deeltype voor intern en extern", icon:"📄", iconBg:"#ececf4", color:"#6264A7", cat:"samenwerken" },
+  meta:{ title:"Document intern of extern delen", subtitle:"Kies het juiste deeltype voor intern en extern", icon:"Share", iconBg:"#ececf4", color:"#6264A7", cat:"samenwerken" },
   nodes:{
     "start":{ question:"Met wie wil je het document delen?", stepLabel:"Ontvanger", options:[
       { label:"Interne collega('s)", sub:"Mensen binnen mijn organisatie", next:"intern" },
@@ -615,7 +617,7 @@ const trees = {
 },
 
 "struct_kanaal": {
-  meta:{ title:"Kanaaltype kiezen", subtitle:"Kies het juiste kanaaltype voor de juiste samenwerking", icon:"📄", iconBg:"#e1f0f1", color:"#038387", cat:"structuur" },
+  meta:{ title:"Kanaaltype kiezen", subtitle:"Kies het juiste kanaaltype voor de juiste samenwerking", icon:"Sections", iconBg:"#e1f0f1", color:"#038387", cat:"structuur" },
   nodes:{
     "start":{ question:"Bestaat er al een Microsoft Team voor dit onderwerp?", stepLabel:"Bestaand Team", options:[
       { label:"Ja - ik wil een kanaal toevoegen", next:"doel_kanaal" },
@@ -648,7 +650,7 @@ const trees = {
 },
 
 "struct_team": {
-  meta:{ title:"Nieuw Team aanmaken?", subtitle:"Beoordeel of een nieuw Team nodig is en welk type", icon:"📄", iconBg:"#e1f0f1", color:"#038387", cat:"structuur" },
+  meta:{ title:"Nieuw Team aanmaken?", subtitle:"Beoordeel of een nieuw Team nodig is en welk type", icon:"AddGroup", iconBg:"#e1f0f1", color:"#038387", cat:"structuur" },
   nodes:{
     "start":{ question:"Is er al een Microsoft Team dat dit doel kan dienen?", stepLabel:"Bestaand Team", options:[
       { label:"Ja - er is al een geschikt Team", next:"r_gebruik_bestaand" },
@@ -680,6 +682,7 @@ const trees = {
 
 };
 
+// ================================================================
 // REPLACE BLOCK END POSITION
 
 // ================================================================
@@ -808,7 +811,7 @@ function loadTree(tid){
   const badge = document.getElementById('topbar-badge');
   badge.style.display = 'inline-flex';
   badge.style.background = cat.color;
-  badge.innerHTML = ic(cat.icon,'0.8rem') + ' ' + cat.label;
+  badge.innerHTML = ic(cat.icon) + '<span>' + cat.label + '</span>';
 
   renderContent();
 }
