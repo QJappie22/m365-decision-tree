@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microsoft 365 — Beslisboom</title>
+<link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue:#0078D4;--lblue:#EEF3FB;
+  --purple:#6264A7;--lpurp:#F4F4FF;
+  --teal:#038387;--lteal:#EAF7F7;
+  --green:#107C10;--lgreen:#EBF3EB;
+  --orange:#FFB900;--lorange:#FFF9E6;
+  --red:#D83B01;--lred:#FDF0EB;
+  --crimson:#A4262C;--lcrim:#FDF1F1;
+  --dark:#201F1E;--mid:#605E5C;--light:#F3F2F1;
+  --border:#E1DFDD;--white:#fff;
+  --navy:#102B6A;
+  --sidebar:260px;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#F0F2FA;display:flex;min-height:100vh;overflow:hidden}
+
+/* ── Sidebar ── */
+.sidebar{
+  width:var(--sidebar);min-width:var(--sidebar);
+  background:var(--navy);
+  height:100vh;overflow-y:auto;overflow-x:hidden;
+  display:flex;flex-direction:column;
+  flex-shrink:0;
+  position:relative;z-index:50;
+}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:2px}
+
+.sidebar-logo{
+  padding:20px 18px 16px;
+  border-bottom:1px solid rgba(255,255,255,.12);
+}
+.logo-dots{display:flex;gap:5px;margin-bottom:10px}
+.logo-dot{width:10px;height:10px;border-radius:2px}
+.sidebar-logo h1{color:white;font-size:1rem;font-weight:800;line-height:1.3}
+.sidebar-logo p{color:rgba(255,255,255,.5);font-size:.72rem;margin-top:2px}
+
+.cat-header{
+  padding:10px 18px 6px;
+  font-size:.68rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  display:flex;align-items:center;gap:7px;
+  margin-top:8px;
+}
+.cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+.tree-btn{
+  width:100%;text-align:left;
+  padding:8px 18px 8px 30px;
+  background:none;border:none;
+  color:rgba(255,255,255,.65);
+  font-family:inherit;font-size:.8rem;
+  cursor:pointer;transition:all .15s ease;
+  display:flex;align-items:center;gap:8px;
+  line-height:1.3;
+}
+.tree-btn:hover{background:rgba(255,255,255,.08);color:white}
+.tree-btn.active{
+  background:rgba(255,255,255,.15);
+  color:white;font-weight:700;
+}
+.tree-btn.active::before{
+  content:'';width:3px;height:100%;background:white;
+  position:absolute;left:0;border-radius:0 2px 2px 0;
+}
+.tree-btn{position:relative}
+.tree-icon{font-size:.95rem;flex-shrink:0;width:18px;text-align:center}
+
+/* ── Main area ── */
+.main{flex:1;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.topbar{
+  background:white;border-bottom:1px solid var(--border);
+  padding:14px 28px;display:flex;align-items:center;gap:14px;
+  position:sticky;top:0;z-index:40;box-shadow:0 1px 4px rgba(0,0,0,.06);
+  flex-shrink:0;
+}
+.menu-btn{
+  display:none;background:none;border:none;cursor:pointer;
+  font-size:1.2rem;color:var(--mid);padding:2px 6px;
+}
+.topbar-badge{
+  font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;
+  color:white;margin-left:auto;white-space:nowrap;
+}
+#topbar-title{font-size:.95rem;font-weight:700;color:var(--dark)}
+
+/* ── Welcome screen ── */
+.welcome{
+  padding:40px 32px;max-width:800px;
+}
+.welcome h2{font-size:1.6rem;font-weight:800;color:var(--dark);margin-bottom:10px}
+.welcome p{color:var(--mid);font-size:.95rem;margin-bottom:28px;line-height:1.6}
+.welcome-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.welcome-card{
+  background:white;border-radius:14px;padding:16px;
+  border:2px solid var(--border);cursor:pointer;
+  transition:all .18s ease;
+}
+.welcome-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.wc-icon{font-size:1.6rem;margin-bottom:8px}
+.wc-title{font-size:.88rem;font-weight:700;color:var(--dark);margin-bottom:3px}
+.wc-sub{font-size:.76rem;color:var(--mid);line-height:1.4}
+
+/* ── Tree card ── */
+.tree-area{padding:24px 28px;max-width:800px}
+.card{background:white;border-radius:18px;box-shadow:0 2px 16px rgba(0,0,0,.1);overflow:hidden}
+.card-header{padding:20px 28px 16px;display:flex;align-items:center;gap:14px;border-bottom:2px solid var(--light)}
+.card-icon-wrap{font-size:2rem;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border-radius:13px;flex-shrink:0}
+.card-header h2{font-size:1.2rem;font-weight:800;color:var(--dark)}
+.card-header p{font-size:.82rem;color:var(--mid);margin-top:3px}
+.progress-bar{height:4px;background:var(--light)}
+.progress-fill{height:100%;transition:width .4s ease;border-radius:0 2px 2px 0}
+.breadcrumb{
+  padding:9px 28px;font-size:.74rem;color:var(--mid);
+  background:#FAFAFA;border-bottom:1px solid var(--border);
+  display:flex;flex-wrap:wrap;gap:4px;align-items:center;
+}
+.breadcrumb-item{display:flex;align-items:center;gap:4px}
+.breadcrumb-item::after{content:"›";color:#C8C6C4}
+.breadcrumb-item:last-child::after{display:none}
+.bc-label{font-weight:700;color:var(--dark)}
+.bc-value{color:var(--mid);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tree-content{padding:26px 28px}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Question ── */
+.question-wrap{animation:fadeUp .25s ease}
+.step-num{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--mid);margin-bottom:7px}
+.question-text{font-size:1.35rem;font-weight:800;color:var(--dark);line-height:1.35;margin-bottom:22px}
+.options{display:flex;flex-direction:column;gap:10px}
+.option-btn{
+  background:white;border:2px solid var(--border);border-radius:13px;
+  padding:14px 18px;text-align:left;cursor:pointer;
+  transition:all .17s ease;display:flex;align-items:center;gap:13px;
+  font-family:inherit;font-size:.93rem;color:var(--dark);line-height:1.35;
+}
+.option-btn:hover{border-color:#6264A7;background:#F8F7FF;transform:translateX(4px);box-shadow:0 2px 10px rgba(98,100,167,.15)}
+.opt-icon{font-size:1.4rem;flex-shrink:0;width:34px;text-align:center}
+.opt-content{flex:1}
+.opt-label{font-weight:700;display:block}
+.opt-sub{font-size:.78rem;color:var(--mid);display:block;margin-top:2px}
+.opt-arrow{color:#C8C6C4;font-size:1.2rem;flex-shrink:0}
+.back-row{margin-top:18px}
+
+/* ── Result ── */
+.result-wrap{animation:fadeUp .25s ease}
+.result-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:16px;color:white}
+.result-main{display:flex;align-items:flex-start;gap:16px;padding:20px;border-radius:14px;margin-bottom:18px}
+.result-icon-big{font-size:2.4rem;width:58px;height:58px;display:flex;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,255,255,.82);flex-shrink:0}
+.result-info h3{font-size:1.45rem;font-weight:800;color:white;margin-bottom:6px}
+.result-info p{font-size:.88rem;color:rgba(255,255,255,.92);line-height:1.6}
+.tips{background:var(--light);border-radius:12px;padding:16px 20px;margin-bottom:16px}
+.tips h4{font-size:.83rem;font-weight:800;color:var(--dark);margin-bottom:9px}
+.tips ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+.tips li{font-size:.84rem;color:var(--mid);display:flex;gap:9px;line-height:1.5}
+.tips li::before{content:"✓";color:var(--green);font-weight:800;flex-shrink:0}
+.location-strip{background:#F3F2F1;border-radius:9px;padding:10px 15px;margin-bottom:18px;font-size:.8rem;color:var(--mid);display:flex;align-items:center;gap:9px}
+.btn-row{display:flex;gap:9px;flex-wrap:wrap}
+.btn{padding:10px 20px;border-radius:9px;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;transition:all .17s ease;border:none;display:flex;align-items:center;gap:7px}
+.btn-primary{background:#0078D4;color:white}
+.btn-primary:hover{background:#106EBE;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,120,212,.35)}
+.btn-secondary{background:var(--light);color:var(--dark)}
+.btn-secondary:hover{background:var(--border)}
+
+/* ── Sidebar overlay (mobile) ── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:49}
+
+@media(max-width:700px){
+  .sidebar{position:fixed;left:-100%;transition:left .25s ease;z-index:50}
+  .sidebar.open{left:0}
+  .sidebar-overlay.open{display:block}
+  .menu-btn{display:block}
+  .main{width:100vw}
+  .tree-area{padding:16px}
+  .tree-content{padding:20px}
+  .question-text{font-size:1.1rem}
+}
+
+/* ── Fabric / Fluent icon sizing ── */
+i.ms-Icon{display:inline-block;font-style:normal;vertical-align:middle;line-height:1}
+.opt-icon i.ms-Icon{font-size:1.25rem}
+.tree-icon i.ms-Icon{font-size:1rem}
+.wc-icon i.ms-Icon{font-size:1.55rem}
+.card-icon-wrap i.ms-Icon{font-size:1.9rem}
+.result-icon-big i.ms-Icon{font-size:2.2rem;color:rgba(255,255,255,.95)}
+.cat-header i.ms-Icon{font-size:.85rem;opacity:.7}
+.result-badge i.ms-Icon{font-size:.75rem}
+.location-strip i.ms-Icon{font-size:1rem;flex-shrink:0;color:var(--mid)}
+.tips h4 i.ms-Icon{font-size:.9rem;color:var(--green)}
+.btn i.ms-Icon{font-size:.9rem}
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo" onclick="goHome()" title="Terug naar startpagina" style="cursor:pointer">
+    <div class="logo-dots">
+      <div class="logo-dot" style="background:#F25022"></div>
+      <div class="logo-dot" style="background:#7FBA00"></div>
+      <div class="logo-dot" style="background:#00A4EF"></div>
+      <div class="logo-dot" style="background:#FFB900"></div>
+    </div>
+    <h1>M365 Beslisboom</h1>
+    <p>↩ Klik voor startpagina</p>
+  </div>
+  <nav id="nav"></nav>
+</aside>
+
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<main class="main">
+  <div class="topbar">
+    <button class="menu-btn" onclick="toggleSidebar()"><i class="ms-Icon ms-Icon--GlobalNavButton"></i></button>
+    <button onclick="goHome()" title="Terug naar startpagina" style="background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--mid);padding:2px 6px;line-height:1;flex-shrink:0" id="home-btn"><i class="ms-Icon ms-Icon--Home"></i></button>
+    <span id="topbar-title">Kies een onderwerp</span>
+    <span class="topbar-badge" id="topbar-badge" style="display:none"></span>
+  </div>
+  <div id="content"></div>
+</main>
+
+<script>
+// ================================================================
+// ================================================================
+// CATEGORY & TREE DEFINITIONS
+// ================================================================
+const categories = [
+  { id:"communicatie", label:"Communiceren & Mailen", icon:"📁", color:"#0078D4", trees:["comm_mail_of_teams", "comm_vergadering"] },
+  { id:"opslaan", label:"Documenten & Opslaan", icon:"📁", color:"#0364B8", trees:["opslaan_waar", "opslaan_vinden"] },
+  { id:"samenwerken", label:"Samenwerken in Teams", icon:"📁", color:"#6264A7", trees:["samen_document", "samen_delen"] },
+  { id:"privacy", label:"Privacy & AVG", icon:"📁", color:"#D83B01", trees:["privacy_mag_ik", "privacy_extern"] },
+  { id:"structuur", label:"Teams-structuur", icon:"📁", color:"#038387", trees:["struct_kanaal", "struct_team"] },
+  { id:"herstel", label:"Versies & Herstel", icon:"📁", color:"#107C10", trees:["herstel_bestand", "herstel_versies"] }
+];
+
+const treeLabels = {
+  "comm_mail_of_teams": { icon:"📄", label:"Mail of Teams-bericht?" },
+  "comm_vergadering": { icon:"📄", label:"Vergadering of bericht plannen?" },
+  "herstel_bestand": { icon:"📄", label:"Bestand verwijderd of fout bewerkt?" },
+  "herstel_versies": { icon:"📄", label:"Versies & co-authoring" },
+  "opslaan_waar": { icon:"📄", label:"Waar sla ik een document op?" },
+  "opslaan_vinden": { icon:"📄", label:"Bestand terugvinden" },
+  "privacy_mag_ik": { icon:"📄", label:"Mag ik dit via M365 versturen?" },
+  "privacy_extern": { icon:"📄", label:"Extern communiceren: wat mag?" },
+  "samen_document": { icon:"📄", label:"Samen aan een document werken" },
+  "samen_delen": { icon:"📄", label:"Document intern of extern delen" },
+  "struct_kanaal": { icon:"📄", label:"Kanaaltype kiezen" },
+  "struct_team": { icon:"📄", label:"Nieuw Team aanmaken?" }
+};
+
+// ================================================================
+// ALL TREES  (generated 2026-06-09)
+// ================================================================
+const trees = {
+
+"comm_mail_of_teams": {
+  meta:{ title:"Mail of Teams-bericht?", subtitle:"Kies de juiste communicatievorm voor elk situatie", icon:"📄", iconBg:"#e0effa", color:"#0078D4", cat:"communicatie" },
+  nodes:{
+    "start":{ question:"Voor wie is het bericht bedoeld?", stepLabel:"Ontvanger", options:[
+      { label:"Één collega", sub:"Eén-op-één communicatie", next:"een_persoon" },
+      { label:"Kleine groep (< 10 personen)", sub:"Team, subgroep of tijdelijk overleg", next:"kleine_groep" },
+      { label:"Hele afdeling of team", sub:"Iedereen in mijn team of afdeling", next:"heel_team" },
+      { label:"Iemand buiten de organisatie", sub:"Patiënt, familie, externe partner", next:"r_ga_privacy" }
+    ] },
+    "een_persoon":{ question:"Wat is de aard van het bericht?", stepLabel:"Aard bericht", options:[
+      { label:"Snel informeel - vraag of update", sub:"Geen documentatie vereist", next:"r_teams_chat_11" },
+      { label:"Formeel of met bewijslast", sub:"Beslissingen, toezeggingen, afspraken", next:"r_mail_formeel" },
+      { label:"Werkinstructie of beleidsstuk", sub:"Inhoudelijk document dat bewaard moet worden", next:"r_mail_formeel" },
+      { label:"Bevat (mogelijk) patiëntinformatie", sub:"Namen, BSN, diagnoses, zorggegevens", next:"r_ga_privacy" }
+    ] },
+    "kleine_groep":{ question:"Moet het team dit gesprek later ook kunnen terugvinden?", stepLabel:"Transparantie", options:[
+      { label:"Ja - transparantie en naslagbaarheid", sub:"Andere teamleden mogen dit zien", next:"r_teams_kanaal" },
+      { label:"Nee - dit is alleen voor ons", sub:"Vertrouwelijk of informeel", next:"r_groepschat" }
+    ] },
+    "heel_team":{ question:"Wat is het doel van het bericht?", stepLabel:"Berichtdoel", options:[
+      { label:"Aankondiging - iedereen moet dit lezen", sub:"Nieuws, wijziging procedure, urgent bericht", next:"r_teams_aankondiging" },
+      { label:"Discussie of vraag aan het team", sub:"Je verwacht reacties en antwoorden", next:"r_teams_kanaal" },
+      { label:"Formele kennisgeving of nieuwsbrief", sub:"Extern vindbaar of archiefwaardig", next:"r_mail_breed" }
+    ] },
+    "r_teams_chat_11":{ result:true, color:"#6264A7", title:"Teams - 1-op-1 chat", location:"Teams › Chat › Nieuw chatgesprek", description:"Stuur een directe Teams-chat voor snelle, informele communicatie. Ideaal voor een korte vraag of update aan één collega.", tips:["Open Teams › Chat › klik het potlood-icoon (Nieuw chat)", "Typ de naam van je collega en stuur je bericht", "Chats zijn alleen zichtbaar voor deelnemers - niet voor het team", "Gebruik @vermelding als je een reactie nodig hebt en wil dat de ander een notificatie ontvangt"] },
+    "r_mail_formeel":{ result:true, color:"#0078D4", title:"Outlook - e-mail", location:"Outlook › Nieuw e-mailbericht", description:"Gebruik e-mail voor formele communicatie, officiële besluiten, toezeggingen en berichten die aantoonbaar verstuurd moeten zijn.", tips:["E-mail is beter doorzoekbaar en archiveerbaar dan chat voor formele zaken", "Geef de onderwerpregel een duidelijke omschrijving", "Voeg bestanden bij als bijlage of als OneDrive-link (geen grote bijlagen sturen)", "Bevestig mondeling gemaakte afspraken altijd per e-mail voor bewijslast"] },
+    "r_teams_kanaal":{ result:true, color:"#6264A7", title:"Teams - kanaalbericht", location:"Teams › [Team] › [Kanaal] › Berichten › Nieuw bericht", description:"Gebruik een kanaalbericht voor teamcommunicatie die transparant, doorzoekbaar en voor iedereen vindbaar moet zijn.", tips:["Ga naar het juiste kanaal en klik 'Nieuw bericht'", "Gebruik @vermelding om specifieke collega's te notificeren", "Beantwoord altijd als 'Antwoord' op een bestaand bericht om de discussie overzichtelijk te houden", "Kanaalberichten zijn doorzoekbaar voor alle teamleden - ook nieuwe collega's"] },
+    "r_groepschat":{ result:true, color:"#6264A7", title:"Teams - groepschat", location:"Teams › Chat › Nieuw chatgesprek (meerdere namen toevoegen)", description:"Een groepschat is ideaal voor tijdelijk, informeel overleg met een kleine groep. Niet zichtbaar voor het bredere team.", tips:["Klik op het potlood-icoon in Chat › voeg meerdere namen toe", "Geef de groepschat een naam voor duidelijkheid", "Bestanden die je deelt worden opgeslagen in OneDrive", "Voor structurele samenwerking: overweeg een kanaal in het Team"] },
+    "r_teams_aankondiging":{ result:true, color:"#6264A7", title:"Teams - aankondiging in Algemeen-kanaal", location:"Teams › [Team] › Algemeen › Berichten › type: Aankondiging", description:"Gebruik het berichttype 'Aankondiging' in het Algemeen-kanaal voor belangrijke organisatorische updates.", tips:["Klik 'Nieuw bericht' › selecteer type 'Aankondiging' (pennenpictogram links onder)", "Gebruik opmaakopties voor een duidelijke lay-out", "Stuur via het Algemeen-kanaal zodat álle teamleden het zien", "Schakel 'Belangrijk' in als iedereen direct een notificatie moet ontvangen"] },
+    "r_mail_breed":{ result:true, color:"#0078D4", title:"Outlook - e-mail aan afdeling of distributiegroep", location:"Outlook › Nieuw e-mailbericht › adresboek: distributiegroep of team", description:"Gebruik e-mail voor formele, brede kennisgevingen die ook buiten Teams bewaard en doorgestuurd moeten kunnen worden.", tips:["Gebruik een distributiegroep of M365-groepsadres (te vinden in het adresboek)", "Houd de e-mail beknopt en voeg een duidelijke 'Actie vereist' of 'Ter informatie' toe", "Voor interne nieuws: overweeg ook een SharePoint-nieuwspagina", "Stuur geen grote bijlagen mee - gebruik in plaats daarvan een OneDrive-deellink"] },
+    "r_ga_privacy":{ result:true, color:"#D83B01", title:"Controleer eerst: Privacy & AVG-beslisboom", location:"Menu › Privacy & AVG › 'Mag ik dit via M365 versturen?'", description:"Communicatie met externen of berichten met patiëntinformatie vereisen extra zorgvuldigheid. Gebruik de Privacy-beslisboom om te bepalen wat is toegestaan.", tips:["Stuur nooit patiëntgegevens (naam, BSN, diagnose, medicatie) via reguliere e-mail of chat", "Gebruik voor patiëntcommunicatie het goedgekeurde patiëntportaal of EPD", "Raadpleeg bij twijfel de Functionaris Gegevensbescherming (FG) van uw organisatie", "Gebruik de Privacy & AVG-beslisboom voor verdere begeleiding"] }
+  }
+},
+
+"comm_vergadering": {
+  meta:{ title:"Vergadering of bericht plannen?", subtitle:"Voorkom onnodige meetings - kies de juiste werkvorm", icon:"📄", iconBg:"#e0effa", color:"#0078D4", cat:"communicatie" },
+  nodes:{
+    "start":{ question:"Wat wil je bereiken?", stepLabel:"Doel", options:[
+      { label:"Afstemmen, beslissing nemen of overleggen", sub:"Interactie en reacties zijn nodig", next:"overleg" },
+      { label:"Informatie of update eenmalig delen", sub:"Weinig tot geen discussie verwacht", next:"informatie" },
+      { label:"Patiëntbespreking of multidisciplinair overleg", sub:"MDO, zorgteamoverleg of overdracht", next:"r_mdo" },
+      { label:"Snelle vraag of korte afstemming (< 5 min)", sub:"Echt heel kort", next:"r_chat_snel" }
+    ] },
+    "overleg":{ question:"Met hoeveel mensen?", stepLabel:"Deelnemers", options:[
+      { label:"2 tot 5 personen", next:"overleg_klein" },
+      { label:"6 of meer personen", next:"r_vergadering_groot" }
+    ] },
+    "overleg_klein":{ question:"Is het een terugkerend overleg?", stepLabel:"Frequentie", options:[
+      { label:"Ja - wekelijks of maandelijks", next:"r_terugkerend" },
+      { label:"Nee - eenmalig of ad hoc", next:"r_eenmalig" }
+    ] },
+    "informatie":{ question:"Verwacht je reacties of discussie?", stepLabel:"Interactie", options:[
+      { label:"Ja - ik wil vragen kunnen beantwoorden", next:"r_eenmalig" },
+      { label:"Nee - puur ter informatie", next:"r_kanaal_of_mail" }
+    ] },
+    "r_chat_snel":{ result:true, color:"#6264A7", title:"Teams - chat of kanaalbericht", location:"Teams › Chat of Kanaal › Berichten", description:"Voor een snelle vraag of update is een Teams-bericht veel efficiënter dan een vergadering.", tips:["Stuur een chat- of kanaalbericht met je vraag", "Gebruik @vermelding zodat de juiste persoon een notificatie ontvangt", "Stel een deadline voor urgente zaken: 'Kan je hier voor 14:00 op reageren?'", "Een vergadering inplannen voor iets wat in één bericht op te lossen is, kost iedereen tijd"] },
+    "r_eenmalig":{ result:true, color:"#6264A7", title:"Eenmalige Teams-vergadering plannen", location:"Teams › Agenda › Nieuwe vergadering, of Outlook › Nieuwe vergadering", description:"Plan een eenmalige Teams-vergadering via de Teams-agenda of vanuit Outlook.", tips:["Open Teams › Agenda (linkerzijbalk) › Nieuwe vergadering", "Voeg deelnemers toe en kies datum/tijd", "Stuur altijd een agenda mee zodat de vergadering gestructureerd en efficiënt verloopt", "Externe deelnemers kunnen zonder Teams-account deelnemen via de browser"] },
+    "r_terugkerend":{ result:true, color:"#6264A7", title:"Terugkerende Teams-vergadering", location:"Teams › Agenda › Nieuwe vergadering › Herhaling instellen", description:"Stel een terugkerend patroon in zodat het overleg automatisch in alle agenda's staat.", tips:["Kies bij het plannen 'Herhaalt' en stel het patroon in (wekelijks, tweewekelijks, etc.)", "Koppel de vergadering aan een Teams-kanaal als het overleg bij een specifiek team hoort", "Gebruik 'Vergaderingsnotities' in Teams voor gedeelde aantekeningen en actiepunten", "Wijs een vaste notulist aan en bewaar actiepunten altijd schriftelijk"] },
+    "r_vergadering_groot":{ result:true, color:"#6264A7", title:"Teams-vergadering (grotere groep)", location:"Teams › Agenda › Nieuwe vergadering", description:"Plan een gestructureerde Teams-vergadering met heldere agenda, tijdslimiet en duidelijke rolverdeling.", tips:["Stuur de uitnodiging op tijd met een agenda zodat mensen zich kunnen voorbereiden", "Benoem een voorzitter en een notulist", "Gebruik 'Handen opsteken' en Q&A voor geordende discussie", "Schakel microfoons standaard uit om achtergrondgeluid te beperken"] },
+    "r_mdo":{ result:true, color:"#6264A7", title:"MDO of zorgteamoverleg via Teams", location:"Teams › Agenda › Nieuwe vergadering (of kanaalvergadering)", description:"Plan een multidisciplinair of zorgteamoverleg als Teams-vergadering. Let op: bespreek geen patiënten bij naam tenzij vergadering beveiligd is.", tips:["Plan de vergadering via Teams › Agenda en koppel aan het juiste zorgteam-kanaal", "Controleer wie er aan de vergadering deelneemt - gasten buiten de org zien ook de inhoud", "Bespreek patiëntgegevens alleen als alle deelnemers daartoe bevoegd zijn (toegangsrechten EPD)", "Leg besluiten en acties direct vast in Vergaderingsnotities of het EPD - niet in de Teams-chat", "Raadpleeg het privacybeleid van uw organisatie voor regels rondom patiëntbesprekingen"] },
+    "r_kanaal_of_mail":{ result:true, color:"#0078D4", title:"Kanaalbericht of e-mail (geen vergadering nodig)", location:"Teams › Kanaal › Berichten, of Outlook › Nieuwe e-mail", description:"Puur informatieve updates zijn beter geschikt als kanaalbericht of e-mail. Dit bespaart iedereen tijd.", tips:["Gebruik een kanaalbericht als de informatie voor het team bestemd is", "Gebruik e-mail voor formele kennisgevingen of berichten met externe ontvangers", "Voeg altijd een samenvatting of 'TL;DR' toe zodat de kern snel duidelijk is", "Vraag om een lees- of reactiebevestiging als je wilt weten of het gelezen is"] }
+  }
+},
+
+"herstel_bestand": {
+  meta:{ title:"Bestand verwijderd of fout bewerkt?", subtitle:"Stappen voor herstel via prullenbak of versiegeschiedenis", icon:"📄", iconBg:"#e2efe2", color:"#107C10", cat:"herstel" },
+  nodes:{
+    "start":{ question:"Wat is er precies aan de hand?", stepLabel:"Probleem", options:[
+      { label:"Bestand per ongeluk verwijderd", next:"verwijderd_waar" },
+      { label:"Bestand overschreven of fout bewerkt", sub:"Ik wil een eerdere versie terughalen", next:"r_versiegeschied" },
+      { label:"Bestand is er nog maar ik kan het niet vinden", sub:"Niet verwijderd, maar zoekgeraakt", next:"r_naar_vinden" },
+      { label:"Lang geleden verwijderd (> 3 maanden)", next:"r_te_laat_it" }
+    ] },
+    "verwijderd_waar":{ question:"Waar stond het bestand?", stepLabel:"Oorspronkelijke locatie", options:[
+      { label:"In mijn eigen OneDrive", next:"r_od_prullenbak" },
+      { label:"In een Teams-kanaal of SharePoint-site", next:"r_sp_prullenbak" },
+      { label:"Op mijn laptop (gesynchroniseerd met OneDrive)", next:"r_lokaal_verwijderd" }
+    ] },
+    "r_od_prullenbak":{ result:true, color:"#0364B8", title:"OneDrive Prullenbak (30 dagen)", location:"OneDrive › Prullenbak (linkerzijbalk)", description:"Verwijderde bestanden staan 30 dagen in de OneDrive-prullenbak. Daarna gaan ze nog eens 30 dagen naar de tweede-fase prullenbak.", tips:["Open OneDrive (browser) › klik 'Prullenbak' in de linkerzijbalk", "Selecteer het bestand › klik 'Herstellen'", "Het bestand keert terug op de oorspronkelijke locatie", "Na 30+30 dagen: neem contact op met IT voor herstel via een back-up"] },
+    "r_sp_prullenbak":{ result:true, color:"#038387", title:"SharePoint / Teams Prullenbak (93 dagen)", location:"SharePoint-site › Inhoud van site › Prullenbak", description:"De SharePoint-prullenbak bewaart verwijderde items 93 dagen. Dit geldt ook voor bestanden in Teams-kanalen.", tips:["Ga naar de SharePoint-site van het Team › Instellingen (tandwiel) › Inhoud van site", "Klik op 'Prullenbak' (linksboven of linksonder)", "Selecteer het bestand › klik 'Herstellen'", "Items die ook uit de prullenbak verwijderd zijn: nog 93 dagen in tweede fase - neem contact op met IT"] },
+    "r_lokaal_verwijderd":{ result:true, color:"#0364B8", title:"Windows Prullenbak of OneDrive-prullenbak", location:"Windows Prullenbak (bureaublad) of OneDrive › Prullenbak", description:"Gesynchroniseerde bestanden staan zowel in de Windows Prullenbak als in de OneDrive-prullenbak.", tips:["Controleer eerst de Windows Prullenbak op je bureaublad", "Als het er niet meer staat: open OneDrive (browser) › Prullenbak", "Herstel vanuit de OneDrive-prullenbak als de Windows-prullenbak leeg is", "Het bestand is dan zowel lokaal als in de cloud hersteld"] },
+    "r_versiegeschied":{ result:true, color:"#107C10", title:"Versiegeschiedenis gebruiken", location:"OneDrive/SharePoint › Bestand › Versiegeschiedenisvenster", description:"Elk Office-bestand bewaart automatisch eerdere versies. Zo herstel je een specifieke staat van het document.", tips:["Klik met rechtermuisknop op het bestand in OneDrive/SharePoint › 'Versiegeschiedenisvenster'", "Of open het document › Bestand › Informatie › Versiegeschiedenisvenster", "Klik naast een versie op ··· › 'Herstellen'", "SharePoint bewaart standaard 500 versies per bestand"] },
+    "r_naar_vinden":{ result:true, color:"#0364B8", title:"Gebruik de beslisboom 'Bestand terugvinden'", location:"Menu › Documenten & Opslaan › Bestand terugvinden", description:"Het bestand is niet verwijderd maar zoekgeraakt. Gebruik de zoekbeslisboom voor de juiste stappen.", tips:["Klik in het menu op 'Documenten & Opslaan' › 'Bestand terugvinden'", "Gebruik Microsoft Search (microsoft365.com) als snelle eerste stap", "Controleer OneDrive › Recent voor recent geopende bestanden"] },
+    "r_te_laat_it":{ result:true, color:"#D83B01", title:"Neem contact op met IT", location:"IT-helpdesk / Servicedesk", description:"Bestanden die langer dan 93 dagen geleden zijn verwijderd zijn niet meer via de prullenbak te herstellen. IT kan via een back-up zoeken.", tips:["Meld het zo snel mogelijk bij de IT-helpdesk", "Geef de bestandsnaam, locatie en de verwijderdatum zo precies mogelijk op", "IT kan zoeken in back-ups, maar herstel is niet altijd gegarandeerd", "Tip voor de toekomst: bewaarbeleid (retention policy) instellen via Microsoft Purview"] }
+  }
+},
+
+"herstel_versies": {
+  meta:{ title:"Versies & co-authoring", subtitle:"Terugkeren naar eerder werk en conflicten oplossen", icon:"📄", iconBg:"#e2efe2", color:"#107C10", cat:"herstel" },
+  nodes:{
+    "start":{ question:"Wat wil je doen of oplossen?", stepLabel:"Doel", options:[
+      { label:"Een oudere versie van een document terughalen", sub:"Ongedaan maken of terugkeren naar eerder werk", next:"versie_app" },
+      { label:"Zien wie wat heeft gewijzigd en wanneer", sub:"Activiteitslog of audittrail bekijken", next:"r_activiteit" },
+      { label:"Conflicten bij samenwerken oplossen", sub:"Twee personen hebben tegelijk bewerkt", next:"r_conflict" },
+      { label:"AutoOpslaan werkt niet correct", sub:"AutoOpslaan staat uit of werkt niet", next:"r_autosave_fix" }
+    ] },
+    "versie_app":{ question:"In welke omgeving werk je?", stepLabel:"Omgeving", options:[
+      { label:"Browser (Word/Excel/PowerPoint Online)", next:"r_versie_online" },
+      { label:"Desktop-app (Word, Excel of PowerPoint)", next:"r_versie_desktop" },
+      { label:"Teams - bestand geopend vanuit kanaal", next:"r_versie_teams" }
+    ] },
+    "r_versie_online":{ result:true, color:"#107C10", title:"Versiegeschiedenis in de browser", location:"Office Online (browser) › Bestand › Informatie › Versiegeschiedenisvenster", description:"Office Online houdt automatisch versies bij. Klik op een versie om te vergelijken of te herstellen.", tips:["Open het document in de browser › klik 'Bestand' (of de documenttitel) › 'Versiegeschiedenisvenster'", "Een zijpaneel opent met alle opgeslagen versies op datum/tijd", "Klik op een versie om te bekijken - klik dan 'Herstellen' als dit de gewenste versie is", "Herstellen overschrijft de huidige versie niet - de huidige versie wordt ook bewaard"] },
+    "r_versie_desktop":{ result:true, color:"#107C10", title:"Versiegeschiedenis in de desktop-app", location:"Word/Excel/PowerPoint › Bestand › Informatie › Versiegeschiedenisvenster", description:"De desktop-app toont dezelfde versiegeschiedenis als online, mits het bestand is opgeslagen in OneDrive of SharePoint.", tips:["Open het document › klik 'Bestand' (lint) › 'Informatie' › 'Versiegeschiedenisvenster'", "Zorg dat AutoOpslaan aanstaat (schakelaar linksboven in het lint) voor optimale versieopslag", "Als het bestand lokaal is opgeslagen (niet in cloud), zijn er mogelijk geen cloudversies beschikbaar"] },
+    "r_versie_teams":{ result:true, color:"#107C10", title:"Versiegeschiedenis via Teams-bestand", location:"Teams › Kanaal › Bestanden › ··· naast bestand › Versiegeschiedenisvenster", description:"Via Teams open je de versiegeschiedenis rechtstreeks vanuit het Bestanden-tabblad.", tips:["Ga naar het kanaal › Bestanden", "Klik op de drie puntjes (···) naast het bestand › 'Versiegeschiedenisvenster'", "Of open het bestand en gebruik Bestand › Informatie zoals in de browser", "Versieopslag werkt via SharePoint (op de achtergrond)"] },
+    "r_activiteit":{ result:true, color:"#107C10", title:"Activiteiten en wijzigingen bekijken", location:"OneDrive/SharePoint › Bestandsdetails › Activiteit", description:"Bekijk wie het bestand heeft geopend, gewijzigd of gedeeld via de Activiteit-zijbalk.", tips:["Klik op het bestand in OneDrive/SharePoint › rechtermuisknop › 'Details'", "In het detailvenster zie je een 'Activiteit'-sectie met recente acties per persoon", "Combineer met versiegeschiedenis voor een compleet beeld van wijzigingen", "Voor audit-logging op organisatieniveau: neem contact op met IT / Microsoft Purview"] },
+    "r_conflict":{ result:true, color:"#107C10", title:"Co-authoring-conflicten oplossen", location:"Word/Excel/PowerPoint - bewerkconflict-melding", description:"Als twee personen tegelijk bewerken en er een conflict ontstaat, biedt Office een samenvoegoptie.", tips:["Office toont een melding als er een conflict is - klik hierop om te vergelijken", "Kies welke versie je wilt bewaren of combineer de wijzigingen handmatig", "Werk in de browser (Office Online) voor de beste co-authoring-ervaring - conflicten zijn daar zeldzamer", "Schakel AutoOpslaan in bij desktop-apps om de kans op conflicten te verkleinen"] },
+    "r_autosave_fix":{ result:true, color:"#107C10", title:"AutoOpslaan inschakelen", location:"Word/Excel/PowerPoint › AutoOpslaan-schakelaar (linksboven in het lint)", description:"AutoOpslaan werkt alleen als het bestand is opgeslagen in OneDrive of SharePoint. Lokale bestanden worden niet automatisch opgeslagen.", tips:["Zet de 'AutoOpslaan'-schakelaar linksboven in het lint op Aan", "Als de schakelaar grijs is: sla het bestand eerst op in OneDrive of SharePoint", "AutoOpslaan slaat elke paar seconden automatisch op - je verliest nooit meer werk", "Verplaats documenten waar je aan werkt altijd naar OneDrive of Teams voor optimale bescherming"] }
+  }
+},
+
+"opslaan_waar": {
+  meta:{ title:"Waar sla ik een document op?", subtitle:"Kies de juiste opslaglocatie voor elk type bestand", icon:"📄", iconBg:"#e1ecf6", color:"#0364B8", cat:"opslaan" },
+  nodes:{
+    "start":{ question:"Voor wie is dit document bedoeld?", stepLabel:"Doelgroep", options:[
+      { label:"Alleen voor mijzelf", sub:"Persoonlijk werk, aantekeningen, concepten", next:"persoonlijk" },
+      { label:"Mijn team of afdeling", sub:"Samenwerking met directe collega's", next:"team" },
+      { label:"Hele organisatie", sub:"Beleid, protocollen, procedures voor iedereen", next:"r_sp_org" },
+      { label:"Het betreft patiëntgegevens", sub:"Naam, BSN, diagnose, zorgplan, medicatie", next:"r_epd_waarschuwing" }
+    ] },
+    "persoonlijk":{ question:"Hoe lang heb je het document nodig?", stepLabel:"Bewaartermijn", options:[
+      { label:"Tijdelijk - kladversie of concept", sub:"Ik verplaats of verwijder het later", next:"r_od_temp" },
+      { label:"Langdurig bewaren", sub:"Definitief of regelmatig geraadpleegd", next:"r_od_perm" }
+    ] },
+    "team":{ question:"Bestaat er al een Microsoft Team voor dit onderwerp?", stepLabel:"Bestaand Team", options:[
+      { label:"Ja - ik weet welk Team en kanaal", next:"team_ja" },
+      { label:"Nee of ik weet het niet zeker", next:"team_nee" }
+    ] },
+    "team_ja":{ question:"Is het document relevant voor álle teamleden?", stepLabel:"Bereik", options:[
+      { label:"Ja - voor iedereen in het team", next:"r_teams_kanaal_bestanden" },
+      { label:"Nee - alleen voor een selecte subgroep", sub:"Bijv. leidinggevenden of een deelproject", next:"r_teams_prive" }
+    ] },
+    "team_nee":{ question:"Zijn er meer documenten bij dit project of thema?", stepLabel:"Projectomvang", options:[
+      { label:"Ja - heel project of thema", sub:"Er komen meer bestanden bij dit onderwerp", next:"r_nieuw_team" },
+      { label:"Nee - losstaand document", sub:"Eenmalig, voor een specifiek doel", next:"r_od_delen" }
+    ] },
+    "r_epd_waarschuwing":{ result:true, color:"#D83B01", title:"Gebruik het EPD of zorgdossier - niet OneDrive/Teams", location:"EPD / Zorgdossier (bijv. HiX, ChipSoft, Nexus, Medicom)", description:"Patiëntgegevens horen uitsluitend in het goedgekeurde EPD-systeem of zorgdossier thuis. OneDrive, Teams en SharePoint zijn hier niet voor bedoeld.", tips:["Sla nooit patiëntgegevens op in OneDrive, Teams of SharePoint", "Gebruik het EPD voor alle zorgdossiers, zorgplannen en patiëntgerelateerde aantekeningen", "Twijfel je? Raadpleeg de Functionaris Gegevensbescherming (FG) of je leidinggevende", "AVG-overtreding bij foutieve opslag kan leiden tot meldplicht bij de AP"] },
+    "r_od_temp":{ result:true, color:"#0364B8", title:"OneDrive - Mijn bestanden (tijdelijk concept)", location:"OneDrive › Mijn bestanden", description:"Sla je concept op in OneDrive. Zodra het definitief is of gedeeld moet worden, verplaats je het naar de juiste plek.", tips:["Gebruik OneDrive voor persoonlijk werk dat nog niet af is", "Synchroniseer via de OneDrive-app voor offline gebruik", "Verplaats definitieve documenten naar een teamomgeving (Teams-kanaal of SharePoint)"] },
+    "r_od_perm":{ result:true, color:"#0364B8", title:"OneDrive - Mijn bestanden (persoonlijk, definitief)", location:"OneDrive › Mijn bestanden", description:"Bewaar definitieve persoonlijke documenten in OneDrive. Jij bent eigenaar en hebt volledige controle.", tips:["Maak een logische mappenstructuur voor overzicht", "Let op: bij uitdiensttreding zijn bestanden niet automatisch toegankelijk voor collega's", "Wil je samenwerken? Verplaats het bestand naar het juiste Teams-kanaal"] },
+    "r_teams_kanaal_bestanden":{ result:true, color:"#6264A7", title:"Teams - Bestanden-tabblad in het kanaal", location:"Teams › [Team] › [Kanaal] › Bestanden", description:"Sla op in het Bestanden-tabblad van het kanaal. Alle teamleden hebben automatisch toegang en kunnen samenwerken.", tips:["Ga naar het kanaal › tabblad 'Bestanden' en upload of maak een nieuw document aan", "Alle kanaalleden hebben direct toegang - geen aparte uitnodiging nodig", "Bestanden staan op de achtergrond in SharePoint - ze zijn doorzoekbaar via Microsoft Search", "Stuur een kanaalbericht om je team te informeren dat er een nieuw document staat"] },
+    "r_teams_prive":{ result:true, color:"#6264A7", title:"Teams - Privékanaal of OneDrive + deellink", location:"Teams › Privékanaal › Bestanden, of OneDrive › Gedeeld", description:"Gebruik een privékanaal voor structurele subgroep-samenwerking, of OneDrive + deellink voor eenmalig gebruik.", tips:["Privékanalen zijn zichtbaar voor leden, maar niet voor de rest van het team", "Voor eenmalig gebruik is OneDrive + deellink eenvoudiger", "Vraag de teameigenaar een privékanaal aan te maken als dit structureel nodig is"] },
+    "r_sp_org":{ result:true, color:"#038387", title:"SharePoint - Intranetsite of communicatiesite", location:"SharePoint › Intranet of organisatiesite", description:"Organisatiebrede documenten zoals beleid, protocollen en procedures horen op een SharePoint-communicatiesite.", tips:["Neem contact op met de SharePoint-beheerder of communicatieafdeling voor publicatie", "Gebruik gevoeligheidsclassificaties zodat de informatie correct wordt beveiligd", "Schakel versiebeheer in zodat oudere versies van protocollen bewaard blijven", "Communicatiesites zijn leesbaar voor alle medewerkers - controleer de inhoud goed vóór publicatie"] },
+    "r_nieuw_team":{ result:true, color:"#038387", title:"Vraag een nieuw Team aan", location:"Teams › Deelnemen aan of een team maken", description:"Er is nog geen geschikte plek. Vraag een nieuw Microsoft Team aan voor dit project of thema.", tips:["Controleer eerst of er geen vergelijkbaar Team bestaat", "Volg de interne procedure voor het aanvragen van een Team", "Geef het Team een duidelijke, vindbare naam (bijv. 'Afdeling Cardiologie - Projecten')", "Wijs direct twee eigenaren aan voor continuïteit"] },
+    "r_od_delen":{ result:true, color:"#0364B8", title:"OneDrive + deellink naar collega('s)", location:"OneDrive › Mijn bestanden › Delen", description:"Sla op in OneDrive en deel via een link. Geen nieuw Team nodig voor een losstaand document.", tips:["Klik op het bestand › 'Delen' › vul de naam of het e-mailadres van de collega in", "Kies 'Kan bewerken' of 'Kan bekijken' naar behoefte", "Stel een verloopdatum in voor tijdelijke toegang", "Gebruik 'Personen in [organisatienaam] met de link' zodat externen er niet bij kunnen"] }
+  }
+},
+
+"opslaan_vinden": {
+  meta:{ title:"Bestand terugvinden", subtitle:"Stap voor stap naar het juiste document", icon:"📄", iconBg:"#e1ecf6", color:"#0364B8", cat:"opslaan" },
+  nodes:{
+    "start":{ question:"Wat weet je nog over het bestand?", stepLabel:"Wat weet je nog?", options:[
+      { label:"Ik heb het zelf gemaakt of bewerkt", sub:"Het stond in mijn OneDrive", next:"zelf" },
+      { label:"Iemand heeft het met mij gedeeld", sub:"Via e-mail, Teams of een link", next:"r_gedeeld_mij" },
+      { label:"Het stond in een Teams-kanaal of SharePoint", next:"team_bestand" },
+      { label:"Ik weet het echt niet meer", next:"onbekend" }
+    ] },
+    "zelf":{ question:"Hoe lang geleden heb je het bestand bewerkt?", stepLabel:"Recentheid", options:[
+      { label:"Recent - afgelopen 1 à 2 weken", next:"r_recent_od" },
+      { label:"Langer geleden", next:"r_zoeken_od" }
+    ] },
+    "team_bestand":{ question:"Weet je in welk Team of kanaal het stond?", stepLabel:"Locatie", options:[
+      { label:"Ja - ik weet het Team en kanaal", next:"r_teams_bestanden" },
+      { label:"Ik weet het Team maar niet het kanaal", next:"r_teams_zoeken" },
+      { label:"Nee - ik weet het niet meer", next:"r_sp_zoeken" }
+    ] },
+    "onbekend":{ question:"Kun je een deel van de bestandsnaam of inhoud herinneren?", stepLabel:"Zoekterm", options:[
+      { label:"Ja - ik weet (een deel van) de naam", next:"r_m365_naam" },
+      { label:"Ik weet alleen iets over de inhoud", next:"r_m365_inhoud" },
+      { label:"Misschien is het per ongeluk verwijderd", next:"r_prullenbak" }
+    ] },
+    "r_recent_od":{ result:true, color:"#0364B8", title:"OneDrive - Recent tabblad", location:"OneDrive › Startpagina › Recent", description:"Recente bestanden staan bovenaan in het Recent-tabblad van OneDrive en op de startpagina van Microsoft 365.", tips:["Open OneDrive (browser of app) › klik 'Recent'", "Op microsoft365.com (of office.com) staan je laatste bestanden direct zichtbaar", "In Teams: klik linksboven op het Teams-icoon › recente bestanden in de Activity feed"] },
+    "r_zoeken_od":{ result:true, color:"#0364B8", title:"Zoeken in OneDrive", location:"OneDrive › Zoekbalk bovenin", description:"Typ de bestandsnaam of een trefwoord in de zoekbalk van OneDrive. OneDrive zoekt ook binnen de inhoud van bestanden.", tips:["Gebruik de zoekbalk bovenin OneDrive (browser of app)", "Filter op bestandstype, bewerker of datum via 'Filters'", "Zoek ook via microsoft365.com - daar doorzoek je alle M365-locaties in één keer"] },
+    "r_gedeeld_mij":{ result:true, color:"#0364B8", title:"OneDrive - Gedeeld met mij", location:"OneDrive › Gedeeld › Gedeeld met mij", description:"Alle bestanden die met jou zijn gedeeld staan onder 'Gedeeld met mij' in OneDrive.", tips:["Open OneDrive › klik in de linkerzijbalk op 'Gedeeld'", "Gebruik het filter 'Gedeeld met mij'", "Zoek ook in je Outlook-inbox naar de oorspronkelijke deelnotificatie of e-mail"] },
+    "r_teams_bestanden":{ result:true, color:"#6264A7", title:"Teams - Kanaal › Bestanden-tabblad", location:"Teams › [Team] › [Kanaal] › Bestanden", description:"Ga naar het specifieke kanaal en open het Bestanden-tabblad. Alle documenten van dat kanaal staan hier.", tips:["Navigeer naar het Team › kanaal › tabblad 'Bestanden'", "Gebruik de zoekbalk bovenin het Bestanden-tabblad", "Klik op 'Openen in SharePoint' voor meer zoekopties en filteropties"] },
+    "r_teams_zoeken":{ result:true, color:"#6264A7", title:"Teams-zoekbalk gebruiken", location:"Teams › Zoekbalk bovenin (Ctrl+F)", description:"Gebruik de zoekbalk bovenin Teams om het bestand te vinden. Filter de resultaten op 'Bestanden'.", tips:["Klik op de zoekbalk in Teams (of druk Ctrl+F)", "Typ de bestandsnaam of een trefwoord", "Filter de zoekresultaten op 'Bestanden' om chatberichten uit de resultaten te verwijderen"] },
+    "r_sp_zoeken":{ result:true, color:"#038387", title:"Microsoft Search gebruiken", location:"microsoft365.com › Zoekbalk bovenaan", description:"Microsoft Search doorzoekt tegelijkertijd alle Teams, OneDrive-bestanden en SharePoint-sites.", tips:["Ga naar microsoft365.com en gebruik de zoekbalk bovenaan", "Filter resultaten op 'Bestanden' om ruis te beperken", "Gebruik aanhalingstekens voor een exacte zoekterm: bijv. \"protocol medicatie\""] },
+    "r_m365_naam":{ result:true, color:"#0364B8", title:"Microsoft Search - zoeken op naam", location:"microsoft365.com of Windows-zoekbalk (M365-integratie)", description:"Typ (een deel van) de bestandsnaam in de Microsoft Search-balk op microsoft365.com.", tips:["Gebruik de zoekbalk op microsoft365.com voor het beste resultaat", "Gebruik aanhalingstekens voor exacte woordcombinaties", "Zoek ook lokaal via Verkenner als het bestand gesynchroniseerd was met je laptop"] },
+    "r_m365_inhoud":{ result:true, color:"#0364B8", title:"Microsoft Search - zoeken op inhoud", location:"microsoft365.com › Zoekbalk", description:"Microsoft Search zoekt ook binnen de inhoud van documenten. Typ een unieke zin of trefwoord uit het bestand.", tips:["Ga naar microsoft365.com en typ een specifieke zin uit het document", "Hoe unieker het trefwoord, hoe nauwkeuriger het resultaat", "Filter op bestandstype (Word, Excel, PDF) als je weet wat het was"] },
+    "r_prullenbak":{ result:true, color:"#D83B01", title:"Controleer de prullenbak", location:"OneDrive › Prullenbak, of SharePoint › Prullenbak", description:"Verwijderde bestanden staan 30 tot 93 dagen in de prullenbak. Controleer beide locaties.", tips:["OneDrive-prullenbak: OneDrive › klik 'Prullenbak' in de linkerzijbalk (30 dagen)", "SharePoint/Teams-prullenbak: SharePoint-site › Inhoud van site › Prullenbak (93 dagen)", "Na de bewaartermijn: neem contact op met IT voor herstel uit een back-up"] }
+  }
+},
+
+"privacy_mag_ik": {
+  meta:{ title:"Mag ik dit via M365 versturen?", subtitle:"AVG-check voor communicatie en opslag in de zorgsector", icon:"📄", iconBg:"#fae7e1", color:"#D83B01", cat:"privacy" },
+  nodes:{
+    "start":{ question:"Wat voor informatie wil je versturen of opslaan?", stepLabel:"Type informatie", options:[
+      { label:"Patiëntgegevens (naam, BSN, diagnose, medicatie, zorgplan)", sub:"Bijzondere persoonsgegevens", next:"patient_data" },
+      { label:"Personeelsgegevens (vertrouwelijk HR of medisch)", sub:"Ziektemeldingen, beoordeling, salarisinfo", next:"personeel_data" },
+      { label:"Interne organisatie-informatie", sub:"Vergaderverslagen, beleid, werkprocessen", next:"r_intern_ok" },
+      { label:"Algemene werkgerelateerde communicatie", sub:"Roosters, taakverdeling, agenda-items", next:"r_algemeen_ok" }
+    ] },
+    "patient_data":{ question:"Hoe wil je de patiëntgegevens versturen of opslaan?", stepLabel:"Kanaal", options:[
+      { label:"Via reguliere e-mail (intern of extern)", sub:"Outlook - naar collega of andere zorgverlener", next:"r_patient_mail_nee" },
+      { label:"Via Teams chat, bericht of vergadering", sub:"Sturen in Teams-chat of noemen in vergadering", next:"r_patient_teams_nee" },
+      { label:"Opslaan in OneDrive, Teams of SharePoint", sub:"Bestand of notitie in cloud opslaan", next:"r_patient_cloud_nee" },
+      { label:"Via het EPD of goedgekeurde zorgapplicatie", sub:"Interne EPD-systeem van de organisatie", next:"r_patient_epd_ok" }
+    ] },
+    "personeel_data":{ question:"Wat voor personeelsinformatie betreft het?", stepLabel:"Type HR-data", options:[
+      { label:"Medische informatie medewerker (bijv. ziekteverzuim)", next:"r_hr_medisch" },
+      { label:"Beoordelingen, dossiers of arbeidsconflicten", next:"r_hr_vertrouwelijk" },
+      { label:"Algemene HR-communicatie (rooster, verlof, contract)", next:"r_hr_algemeen" }
+    ] },
+    "r_patient_mail_nee":{ result:true, color:"#A4262C", title:"STOP - Patiëntgegevens via reguliere e-mail is niet toegestaan", location:"Gebruik het EPD of beveiligde zorgportaal", description:"Reguliere e-mail (ook intern via Outlook) is niet beveiligd genoeg voor patiëntgegevens. Dit is een schending van de AVG en de NEN 7510-norm.", tips:["Gebruik het EPD voor alle patiëntgerelateerde informatie", "Voor overdracht naar andere zorginstellingen: gebruik het LSP, Zorgmail of een FHIR-koppeling", "Overleg met de FG als je een spoedsituatie hebt waarbij dit toch nodig lijkt", "Meld incidenten (ook bijna-incidenten) bij de FG of via het interne meldingssysteem"] },
+    "r_patient_teams_nee":{ result:true, color:"#A4262C", title:"STOP - Patiëntgegevens via Teams is niet toegestaan", location:"Gebruik het EPD of goedgekeurde communicatietool voor zorg", description:"Teams-chats en kanaalberichten zijn niet bestemd voor patiëntinformatie. Noem geen patiëntnamen, BSN, diagnoses of medicatie in Teams.", tips:["Spreek over patiënten anoniem als dat mogelijk is (bijv. 'de patiënt op kamer 5')", "Gebruik het EPD voor alle klinische communicatie over individuele patiënten", "Vraag uw organisatie of er een gecertificeerde beveiligde berichtenapp beschikbaar is", "Bewustzijn en meldcultuur zijn de beste bescherming - meld twijfelgevallen bij de FG"] },
+    "r_patient_cloud_nee":{ result:true, color:"#A4262C", title:"STOP - Patiëntgegevens horen niet in OneDrive, Teams of SharePoint", location:"Gebruik uitsluitend het EPD of goedgekeurde opslagesysteem", description:"OneDrive, Teams en SharePoint zijn niet gecertificeerd voor de opslag van patiëntgegevens. Dit geldt ook voor anonimiseerbare data.", tips:["Sla alle patiëntgegevens uitsluitend op in het EPD", "Geanonimiseerde data (zonder identificerende kenmerken) mag in bepaalde gevallen wel - vraag de FG", "Voor onderzoek met patiëntdata: volg de procedure van de Privacy Impact Assessment (PIA)", "NEN 7510, AVG en WGBO zijn van toepassing - overtredingen zijn meldplichtig bij de AP"] },
+    "r_patient_epd_ok":{ result:true, color:"#107C10", title:"Correct - gebruik het EPD of goedgekeurde zorgapplicatie", location:"EPD / Zorgdossier (bijv. HiX, ChipSoft, Nexus, Medicom, Carerix)", description:"Je gebruikt de juiste tool. Het EPD en goedgekeurde zorgapplicaties zijn beveiligd en voldoen aan NEN 7510 en AVG.", tips:["Zorg dat je altijd bent ingelogd met je persoonlijke account - nooit met een gedeeld account", "Log altijd uit na gebruik op gedeelde terminals", "Verlies of diefstal van inloggegevens direct melden bij IT", "Toegang tot patiëntdossiers is alleen toegestaan als je een behandelrelatie hebt"] },
+    "r_hr_medisch":{ result:true, color:"#D83B01", title:"Medische personeelsgegevens - alleen via HR-systeem", location:"HR-systeem van uw organisatie (bijv. AFAS, SAP, Youforce)", description:"Medische informatie over medewerkers (inclusief ziekmeldingen en aard van ziekte) mag niet via reguliere e-mail of Teams worden gedeeld.", tips:["Verwerk ziekmeldingen uitsluitend in het HR- of verzuimsysteem", "Noem de aard van ziekte nooit in e-mail, Teams of andere M365-tools", "Alleen de bedrijfsarts en HR-adviseur mogen medische personeelsgegevens inzien", "Bij twijfel: raadpleeg de afdeling HR of de FG"] },
+    "r_hr_vertrouwelijk":{ result:true, color:"#D83B01", title:"Vertrouwelijke HR-informatie - beperkt delen", location:"OneDrive (beveiligd) of HR-systeem - nooit in open Teams-kanaal", description:"Beoordelingen, dossiers en gevoelige HR-correspondentie mogen alleen worden gedeeld met bevoegde personen.", tips:["Sla gevoelige HR-documenten op in OneDrive met specifieke persoons-gebaseerde toegang - niet in een open Teams-kanaal", "Stuur vertrouwelijke HR-informatie per e-mail naar specifieke personen, niet via Teams-chat", "Gebruik gevoeligheidsclassificatie 'Vertrouwelijk' bij het opslaan en versturen", "Vraag aan HR welke documenten in het HR-systeem moeten worden bewaard"] },
+    "r_hr_algemeen":{ result:true, color:"#107C10", title:"Algemene HR-communicatie via M365 - toegestaan", location:"Outlook (e-mail) of Teams (bericht of kanaal)", description:"Roostercommunicatie, verlofaanvragen en contractuele algemene zaken mogen via reguliere M365-tools.", tips:["Gebruik Outlook voor formele communicatie over verlof, contracten en planningen", "Teams is geschikt voor informele afstemmingen over roosters en taakverdeling", "Sla roosterdocumenten op in het Teams-kanaal van de afdeling voor overzicht", "Vraag geen gevoelige medische info op via deze kanalen"] },
+    "r_intern_ok":{ result:true, color:"#107C10", title:"Interne organisatie-informatie - toegestaan via M365", location:"Teams, SharePoint of Outlook naar gelang het type communicatie", description:"Interne beleidsdocumenten, vergaderverslagen en werkprocessen mogen via M365 worden gedeeld en opgeslagen.", tips:["Gebruik SharePoint voor organisatiebrede beleidsdocumenten en procedures", "Gebruik Teams-kanalen voor afdelingsspecifieke informatie en samenwerking", "Gebruik Outlook voor formele correspondentie", "Voeg gevoeligheidsclassificatie toe aan documenten met interne bedrijfsinformatie"] },
+    "r_algemeen_ok":{ result:true, color:"#107C10", title:"Algemene werkcommunicatie - toegestaan via M365", location:"Teams (chat of kanaal) of Outlook", description:"Dagelijkse werkcommunicatie over roosters, taken en afspraken mag gewoon via M365.", tips:["Gebruik Teams-chat voor snelle, informele afstemming", "Gebruik kanaalberichten voor communicatie die het team moet kunnen terugvinden", "Gebruik Outlook voor formele berichten of wanneer je een schriftelijk bewijs nodig hebt", "Stuur geen patiëntnamen of gevoelige medische info mee, ook niet als bijzaak"] }
+  }
+},
+
+"privacy_extern": {
+  meta:{ title:"Extern communiceren: wat mag?", subtitle:"Regels voor communicatie buiten de organisatie in de zorg", icon:"📄", iconBg:"#fae7e1", color:"#D83B01", cat:"privacy" },
+  nodes:{
+    "start":{ question:"Met wie wil je extern communiceren?", stepLabel:"Type externe partij", options:[
+      { label:"Patiënt of familie/mantelzorger", sub:"Directe zorgcommunicatie", next:"patient_comm" },
+      { label:"Externe zorgverlener (andere instelling)", sub:"Huisarts, ander ziekenhuis, thuiszorg", next:"zorg_extern" },
+      { label:"Leverancier of zakelijk contact", sub:"ICT-leverancier, facilitair, inkoop", next:"leverancier" }
+    ] },
+    "patient_comm":{ question:"Bevat de communicatie medische of persoonlijke zorginhoud?", stepLabel:"Inhoud", options:[
+      { label:"Ja - diagnose, behandelplan, uitslagen, afspraken", sub:"Klinische of gevoelige informatie", next:"r_patient_portaal" },
+      { label:"Nee - algemene info zoals openingstijden of routes", sub:"Niet-persoonlijk en openbaar", next:"r_mail_patient_algemeen" }
+    ] },
+    "zorg_extern":{ question:"Gaat het om een patiëntoverdracht of klinische afstemming?", stepLabel:"Type communicatie", options:[
+      { label:"Ja - patiëntoverdracht, verwijzing of ontslagbrief", sub:"Bevat patiëntgegevens", next:"r_zorgmail_of_epd" },
+      { label:"Nee - organisatorisch of administratief contact", sub:"Contracten, afspraken, logistiek", next:"r_mail_extern_ok" }
+    ] },
+    "leverancier":{ question:"Bevat de communicatie gevoelige organisatie- of patiëntinformatie?", stepLabel:"Gevoeligheid", options:[
+      { label:"Ja - vertrouwelijk of patiëntgerelateerd", next:"r_leverancier_beveiligd" },
+      { label:"Nee - algemeen zakelijk contact", next:"r_mail_extern_ok" }
+    ] },
+    "r_patient_portaal":{ result:true, color:"#A4262C", title:"Gebruik het patiëntportaal - niet e-mail of Teams", location:"Patiëntportaal (bijv. MijnOmgeving, ZorgDomein, MedMij-gecertificeerde app)", description:"Medische communicatie met patiënten mag nooit via reguliere e-mail of Teams. Gebruik uitsluitend het goedgekeurde en beveiligde patiëntportaal.", tips:["Gebruik het patiëntportaal van uw organisatie voor veilige berichtenuitwisseling met patiënten", "Patiëntportalen zijn MedMij-gecertificeerd en voldoen aan de AVG en NEN 7510", "Nooit medische informatie per reguliere Outlook-e-mail sturen - ook niet op verzoek van de patiënt", "Vraag de patiënt zich te registreren op het portaal als ze dat nog niet hebben"] },
+    "r_mail_patient_algemeen":{ result:true, color:"#0078D4", title:"Algemene e-mail via Outlook - toegestaan", location:"Outlook › Nieuw e-mailbericht", description:"Algemene informatie zonder persoonlijke of medische inhoud mag per e-mail naar patiënten worden gestuurd.", tips:["Stuur geen medische informatie mee, ook niet per ongeluk als bijlage", "Vermeld geen patiëntnummer, BSN of diagnose in de e-mail", "Gebruik voor antwoorden op vragen over zorg altijd het patiëntportaal", "Maak gebruik van voorbeeldteksten of templates voor frequente communicatie"] },
+    "r_zorgmail_of_epd":{ result:true, color:"#D83B01", title:"Gebruik Zorgmail, EPD-koppeling of beveiligde overdracht", location:"Zorgmail / LSP / FHIR-koppeling / ZorgDomein", description:"Patiëntoverdracht naar externe zorginstellingen mag nooit via reguliere Outlook-e-mail. Gebruik een gecertificeerde, versleutelde zorgcommunicatietool.", tips:["Gebruik Zorgmail (versleutelde e-mail conform NEN 7510) voor veilige overdracht", "Ontslagbrieven en verwijzingen verlopen via het EPD of ZorgDomein", "Neem contact op met uw EPD-beheerder voor de beschikbare koppelingen met huisartsen, thuiszorg etc.", "Reguliere e-mail is nooit toereikend voor klinische patiëntoverdracht"] },
+    "r_mail_extern_ok":{ result:true, color:"#0078D4", title:"Zakelijke e-mail via Outlook - toegestaan", location:"Outlook › Nieuw e-mailbericht", description:"Reguliere zakelijke communicatie zonder patiëntgegevens mag via Outlook worden verstuurd.", tips:["Controleer altijd de ontvanger(s) vóór verzending", "Stuur vertrouwelijke contracten als beveiligde OneDrive-link, niet als bijlage", "Gebruik voor grote groepen ontvangers altijd een BCC om privacy te beschermen", "Schakel 'Versleuteld verzenden' in via Outlook als het bericht gevoelig is (indien beschikbaar)"] },
+    "r_leverancier_beveiligd":{ result:true, color:"#D83B01", title:"Beveiligde externe link met vervaldatum + toegangsbeperking", location:"OneDrive/SharePoint › Delen › Specifieke personen + vervaldatum", description:"Deel gevoelige documenten met leveranciers via een persoonsgebonden beveiligde link, nooit als e-mailbijlage.", tips:["Kies 'Specifieke personen' en vul het zakelijke e-mailadres van de leverancier in", "Stel altijd een vervaldatum in (aanbevolen: 30 dagen)", "Schakel wachtwoordbeveiliging in als extra beschermlaag", "Controleer of uw leverancier een verwerkersovereenkomst heeft getekend vóór het delen van persoonsgegevens"] }
+  }
+},
+
+"samen_document": {
+  meta:{ title:"Samen aan een document werken", subtitle:"Co-authoring, reviews en goedkeuringen in M365", icon:"📄", iconBg:"#ececf4", color:"#6264A7", cat:"samenwerken" },
+  nodes:{
+    "start":{ question:"Wat wil je doen?", stepLabel:"Samenwerkingsvorm", options:[
+      { label:"Tegelijk samen bewerken (co-authoring)", sub:"Meerdere mensen werken tegelijk in het document", next:"coauth" },
+      { label:"Feedback of review vragen", sub:"Anderen lezen mee en geven commentaar", next:"review" },
+      { label:"Goedkeuring vragen van een leidinggevende", sub:"Formele accordering nodig", next:"r_goedkeuring" },
+      { label:"Versie vergelijken of terughalen", sub:"Ik wil een eerdere versie inzien of herstellen", next:"r_naar_herstel" }
+    ] },
+    "coauth":{ question:"Waar staat het document?", stepLabel:"Locatie document", options:[
+      { label:"In OneDrive (mijn bestanden)", next:"r_coauth_od" },
+      { label:"In een Teams-kanaal (Bestanden-tab)", next:"r_coauth_teams" },
+      { label:"Lokaal opgeslagen (op mijn laptop)", next:"r_coauth_lokaal" }
+    ] },
+    "review":{ question:"Wat mag de reviewer doen?", stepLabel:"Reviewrechten", options:[
+      { label:"Alleen lezen - geen aanpassingen", next:"r_review_bekijken" },
+      { label:"Opmerkingen plaatsen", sub:"Commentaar geven maar niet bewerken", next:"r_review_opmerkingen" },
+      { label:"Lezen én bewerken", sub:"Volledige bewerktoegang", next:"r_review_bewerken" }
+    ] },
+    "r_coauth_od":{ result:true, color:"#0364B8", title:"Co-authoring via OneDrive - deel de link", location:"OneDrive › Bestand › Delen › Kan bewerken", description:"Deel het OneDrive-bestand met een bewerklink. Meerdere mensen kunnen nu tegelijk in het document werken.", tips:["Klik op het bestand › 'Delen' › voer namen of e-mailadressen in › kies 'Kan bewerken'", "Open het document in de browser (Office Online) voor de beste co-authoring-ervaring", "Je ziet de cursor en naam van andere bewerkers live in het document", "AutoOpslaan staat automatisch aan bij cloud-opgeslagen bestanden"] },
+    "r_coauth_teams":{ result:true, color:"#6264A7", title:"Co-authoring via Teams - open vanuit Bestanden-tab", location:"Teams › Kanaal › Bestanden › Bestand openen", description:"Open het bestand vanuit het Bestanden-tabblad in Teams. Alle kanaalleden kunnen tegelijk bewerken.", tips:["Ga naar het kanaal › Bestanden › klik op het bestand om het te openen", "Kies 'Openen' in Teams (of de browser) voor co-authoring - niet als download", "Stuur een kanaalbericht om collega's uit te nodigen mee te bewerken", "Wijzigingen worden automatisch opgeslagen en zijn direct zichtbaar voor anderen"] },
+    "r_coauth_lokaal":{ result:true, color:"#D83B01", title:"Verplaats het bestand eerst naar OneDrive of Teams", location:"OneDrive › Uploaden, of Teams › Kanaal › Bestanden › Uploaden", description:"Lokale bestanden ondersteunen geen co-authoring. Verplaats het bestand naar OneDrive of een Teams-kanaal.", tips:["Upload het bestand naar OneDrive of het Bestanden-tabblad in het Teams-kanaal", "Verwijder daarna de lokale kopie om verwarring over versies te voorkomen", "Na verplaatsing staat AutoOpslaan automatisch aan", "Je kunt het bestand nog steeds via de desktop-app (Word/Excel) bewerken - het slaat dan direct op in de cloud"] },
+    "r_review_bekijken":{ result:true, color:"#0364B8", title:"Deellink - Alleen bekijken", location:"OneDrive/SharePoint › Bestand › Delen › Kan bekijken", description:"Deel het document met een alleen-lezen link. De reviewer kan niets per ongeluk wijzigen.", tips:["Klik op het bestand › 'Delen' › kies 'Kan bekijken'", "Gebruik 'Personen in [organisatienaam] met de link' voor intern gebruik", "Stuur de link via Teams-chat of e-mail"] },
+    "r_review_opmerkingen":{ result:true, color:"#6264A7", title:"Deellink - Opmerkingen plaatsen", location:"OneDrive/SharePoint › Delen › Kan opmerkingen plaatsen", description:"De reviewer kan commentaar en annotaties toevoegen zonder het document te wijzigen. Ideaal voor reviewrondes.", tips:["Klik op het bestand › 'Delen' › kies 'Kan opmerkingen plaatsen'", "Opmerkingen zijn zichtbaar voor alle gedeelde ontvangers", "Bekijk ontvangen opmerkingen via het opmerkingenvenster in Word/Excel/PowerPoint", "Reageer op opmerkingen direct in het document voor een overzichtelijke reviewronde"] },
+    "r_review_bewerken":{ result:true, color:"#6264A7", title:"Deellink - Kan bewerken", location:"OneDrive/SharePoint › Delen › Kan bewerken", description:"De reviewer heeft volledige bewerktoegang. Gebruik 'Bijhouden' in Word om te zien wat er gewijzigd is.", tips:["Klik op het bestand › 'Delen' › kies 'Kan bewerken'", "Vraag de reviewer 'Bijhouden' (Track Changes) in te schakelen zodat wijzigingen zichtbaar zijn", "In Word: Controleren › Wijzigingen bijhouden", "Accepteer of weiger de bijgehouden wijzigingen na de reviewronde"] },
+    "r_goedkeuring":{ result:true, color:"#038387", title:"Goedkeuring via Approvals-app in Teams", location:"Teams › Apps › Goedkeuringen (Approvals)", description:"Gebruik de Approvals-app in Teams voor formele accordering door een leidinggevende of verantwoordelijke.", tips:["Open Teams › zoek in Apps naar 'Goedkeuringen' en open de app", "Maak een nieuwe goedkeuringsaanvraag aan en voeg het document toe", "De ontvanger krijgt een notificatie en kan goedkeuren of afwijzen inclusief commentaar", "De goedkeuring wordt vastgelegd - handig als audittrail voor formele documenten"] },
+    "r_naar_herstel":{ result:true, color:"#107C10", title:"Gebruik de beslisboom 'Versies & Herstel'", location:"Menu › Versies & Herstel › 'Bestand verwijderd of fout bewerkt?'", description:"Voor het terughalen of vergelijken van versies, gebruik de Herstel-beslisboom.", tips:["Klik in het menu op 'Versies & Herstel'", "Elk Office-bestand in OneDrive of SharePoint bewaart automatisch alle eerdere versies", "Je kunt tot 500 versies terug per bestand (SharePoint-standaard)"] }
+  }
+},
+
+"samen_delen": {
+  meta:{ title:"Document intern of extern delen", subtitle:"Kies het juiste deeltype voor intern en extern", icon:"📄", iconBg:"#ececf4", color:"#6264A7", cat:"samenwerken" },
+  nodes:{
+    "start":{ question:"Met wie wil je het document delen?", stepLabel:"Ontvanger", options:[
+      { label:"Interne collega('s)", sub:"Mensen binnen mijn organisatie", next:"intern" },
+      { label:"Externe partij", sub:"Externe zorgverlener, leverancier of partner", next:"extern_check" }
+    ] },
+    "intern":{ question:"Wat mag de ontvanger doen?", stepLabel:"Beoogde actie", options:[
+      { label:"Alleen bekijken of lezen", sub:"Geen wijzigingen nodig", next:"r_intern_bekijken" },
+      { label:"Feedback of opmerkingen geven", sub:"Commentaar plaatsen, niet bewerken", next:"r_intern_feedback" },
+      { label:"Samen bewerken", sub:"Inhoud aanpassen of aanvullen", next:"intern_bewerken" }
+    ] },
+    "intern_bewerken":{ question:"Met hoeveel collega's werk je samen?", stepLabel:"Omvang", options:[
+      { label:"1 tot 3 collega's", sub:"Gerichte samenwerking", next:"r_intern_bewerken_link" },
+      { label:"Heel team", sub:"Alle teamleden moeten toegang hebben", next:"r_teams_bewerken" }
+    ] },
+    "extern_check":{ question:"Bevat het document patiëntgegevens of vertrouwelijke medische informatie?", stepLabel:"Gevoeligheid inhoud", options:[
+      { label:"Ja - patiëntgegevens of medische info", sub:"Namen, BSN, diagnose, zorgplan, medicatie", next:"r_nooit_patient_extern" },
+      { label:"Nee - organisatorisch of administratief", sub:"Procedures, facturen, planningen", next:"extern_beleid" }
+    ] },
+    "extern_beleid":{ question:"Is extern delen toegestaan door het organisatiebeleid?", stepLabel:"Beleid", options:[
+      { label:"Ja - het is toegestaan", sub:"Goedkeuring of standaardpraktijk", next:"extern_gevoelig" },
+      { label:"Ik weet het niet zeker", sub:"Twijfel over de regels", next:"r_contact_it" },
+      { label:"Nee - niet toegestaan", next:"r_niet_delen" }
+    ] },
+    "extern_gevoelig":{ question:"Is het document vertrouwelijk of zakelijk gevoelig?", stepLabel:"Gevoeligheid", options:[
+      { label:"Ja - vertrouwelijk", sub:"Financieel, juridisch, HR of strategisch", next:"r_extern_veilig" },
+      { label:"Nee - openbaar of algemeen", sub:"Brochures, presentaties, niet-vertrouwelijk", next:"r_extern_normaal" }
+    ] },
+    "r_intern_bekijken":{ result:true, color:"#0364B8", title:"Interne link - Alleen bekijken", location:"OneDrive › Delen › Personen in [organisatie] met de link › Kan bekijken", description:"Deel een interne link die alleen door collega's binnen de organisatie geopend kan worden.", tips:["Klik op het bestand › 'Delen' › kies 'Personen in [organisatienaam] met de link' › 'Kan bekijken'", "Je collega heeft geen aparte uitnodiging nodig - de link werkt automatisch met hun account", "Stuur de link via Teams-chat of e-mail"] },
+    "r_intern_feedback":{ result:true, color:"#6264A7", title:"Interne link - Opmerkingen plaatsen", location:"OneDrive › Delen › Kan opmerkingen plaatsen", description:"De ontvanger kan commentaar geven zonder het document te wijzigen. Ideaal voor reviewrondes en feedbackverzoeken.", tips:["Klik op het bestand › 'Delen' › kies 'Kan opmerkingen plaatsen'", "Stuur een begeleidend bericht met de reviewdeadline", "Bekijk en beantwoord de opmerkingen direct in het document"] },
+    "r_intern_bewerken_link":{ result:true, color:"#6264A7", title:"Interne link - Kan bewerken", location:"OneDrive › Delen › Personen in [organisatie] › Kan bewerken", description:"Collega's kunnen het document openen en aanpassen. Co-authoring is direct mogelijk.", tips:["Kies 'Personen in [organisatienaam] met de link' › 'Kan bewerken'", "Meerdere mensen kunnen tegelijk bewerken - je ziet elkaars cursor live", "Sla op in Teams-kanaal als je het document wilt bewaren voor het hele team"] },
+    "r_teams_bewerken":{ result:true, color:"#6264A7", title:"Sla op in het Teams-kanaal", location:"Teams › Kanaal › Bestanden-tabblad", description:"Sla het document op in het Bestanden-tabblad van het Teams-kanaal. Alle leden hebben automatisch toegang.", tips:["Gebruik het Bestanden-tabblad in Teams - niet een OneDrive-deellink", "Stuur een kanaalbericht om het team te informeren", "Een bestaand OneDrive-bestand kun je verplaatsen via 'Uploaden' of 'Verplaatsen'"] },
+    "r_nooit_patient_extern":{ result:true, color:"#A4262C", title:"STOP - Patiëntgegevens extern delen is niet toegestaan", location:"Geen actie - raadpleeg FG of EPD-beheerder", description:"Patiëntgegevens mogen nooit via OneDrive, SharePoint of e-mail gedeeld worden met externen. Dit is een ernstige AVG-overtreding.", tips:["Gebruik uitsluitend het goedgekeurde EPD of beveiligde zorgportaal voor patiëntoverdracht", "Voor overdracht tussen zorginstellingen: gebruik XDS, FHIR-gebaseerde koppelingen of het LSP", "Meld een (bijna-)overtreding direct bij de Functionaris Gegevensbescherming (FG)", "Bij vragen over de juiste procedure: neem contact op met de privacycoördinator"] },
+    "r_extern_veilig":{ result:true, color:"#D83B01", title:"Beveiligde externe link - op naam + vervaldatum", location:"OneDrive/SharePoint › Delen › Specifieke personen", description:"Deel met een persoonsgebonden link met vervaldatum. Gebruik nooit 'Iedereen met de link' voor vertrouwelijke informatie.", tips:["Kies 'Specifieke personen' en vul het externe e-mailadres in", "Stel altijd een vervaldatum in (bijv. 30 of 60 dagen)", "Schakel indien mogelijk wachtwoordbeveiliging in als extra laag", "Informeer de ontvanger hoe de verificatie werkt (e-mailcode)"] },
+    "r_extern_normaal":{ result:true, color:"#FFB900", title:"Externe link met vervaldatum", location:"OneDrive › Delen › Iedereen met de link (+ vervaldatum)", description:"Gebruik een externe link voor niet-vertrouwelijke informatie. Stel altijd een vervaldatum in.", tips:["Kies 'Iedereen met de link' alleen voor openbare of algemene informatie", "Stel een verloopdatum in zodat de link automatisch vervalt", "Kies 'Kan bekijken' tenzij bewerken echt nodig is", "Stuur de link per e-mail of via het goedgekeurde communicatiekanaal"] },
+    "r_contact_it":{ result:true, color:"#605E5C", title:"Neem contact op met IT of de FG", location:"IT-servicedesk / Functionaris Gegevensbescherming", description:"Het is onduidelijk of extern delen is toegestaan. Vraag bevestiging vóórdat je deelt - zeker in de zorgsector.", tips:["Vraag je manager, IT-afdeling of FG om bevestiging", "Controleer het informatiebeveiligings- en privacybeleid", "Bij twijfel: deel niet en vraag altijd eerst"] },
+    "r_niet_delen":{ result:true, color:"#A4262C", title:"Niet extern delen", location:"Geen actie", description:"Dit document mag niet worden gedeeld met externe partijen. Houd het intern beschikbaar.", tips:["Deel vertrouwelijke informatie nooit extern zonder expliciete toestemming", "Heb je een uitzondering nodig? Vraag dit via de juiste procedure aan bij je leidinggevende of FG", "Gebruik een goedgekeurde alternatieve methode als uitwisseling toch nodig is"] }
+  }
+},
+
+"struct_kanaal": {
+  meta:{ title:"Kanaaltype kiezen", subtitle:"Kies het juiste kanaaltype voor de juiste samenwerking", icon:"📄", iconBg:"#e1f0f1", color:"#038387", cat:"structuur" },
+  nodes:{
+    "start":{ question:"Bestaat er al een Microsoft Team voor dit onderwerp?", stepLabel:"Bestaand Team", options:[
+      { label:"Ja - ik wil een kanaal toevoegen", next:"doel_kanaal" },
+      { label:"Nee - er is nog geen Team", sub:"Ga naar 'Nieuw Team aanmaken?' in het menu", next:"r_naar_team_boom" }
+    ] },
+    "doel_kanaal":{ question:"Wat is het doel van het nieuwe kanaal?", stepLabel:"Kanaaldoel", options:[
+      { label:"Algemene communicatie - voor het hele team", sub:"Alle teamleden nemen deel", next:"kanaal_open" },
+      { label:"Samenwerking voor een selecte subgroep", sub:"Niet voor alle teamleden bedoeld", next:"kanaal_prive_duur" },
+      { label:"Samenwerking met externe partij of partner", sub:"Externen moeten toegang krijgen", next:"kanaal_extern" }
+    ] },
+    "kanaal_open":{ question:"Mag iedereen in het Team dit kanaal zien en gebruiken?", stepLabel:"Zichtbaarheid", options:[
+      { label:"Ja - zichtbaar voor alle teamleden", next:"r_standaard" },
+      { label:"Nee - alleen voor een subgroep", next:"kanaal_prive_duur" }
+    ] },
+    "kanaal_prive_duur":{ question:"Hoe lang duurt deze samenwerking?", stepLabel:"Duur", options:[
+      { label:"Doorlopend of lange termijn", sub:"Vaste subgroep die structureel samenwerkt", next:"r_prive" },
+      { label:"Tijdelijk of eenmalig", sub:"Korte samenwerking voor een afgebakend doel", next:"r_groepschat_tip" }
+    ] },
+    "kanaal_extern":{ question:"Zijn de externe deelnemers vaste, terugkerende partners?", stepLabel:"Type extern contact", options:[
+      { label:"Ja - vaste externe partner (langdurig)", sub:"Vaste leverancier, ketenpartner", next:"r_gedeeld" },
+      { label:"Nee - wisselend of incidenteel contact", next:"r_extern_incidenteel" }
+    ] },
+    "r_standaard":{ result:true, color:"#038387", title:"Standaard kanaal", location:"Teams › Team › ··· › Kanaal toevoegen › Standaard", description:"Een standaard kanaal is voor alle teamleden zichtbaar. Ideaal voor open communicatie over een onderwerp of afdeling.", tips:["Geef het kanaal een duidelijke naam (onderwerp of projectnaam)", "Voeg een kanaalbeschrijving toe zodat het doel voor iedereen helder is", "Gebruik het bestaande 'Algemeen'-kanaal voor algemene teamcommunicatie", "Maak aparte kanalen per onderwerp of project om overzicht te bewaren"] },
+    "r_prive":{ result:true, color:"#D83B01", title:"Privékanaal", location:"Teams › Team › ··· › Kanaal toevoegen › type: Privé", description:"Alleen zichtbaar voor geselecteerde leden - ook niet voor de teameigenaar, tenzij uitgenodigd.", tips:["Voeg bij aanmaken direct de juiste leden toe", "Elk privékanaal heeft een eigen afgeschermde SharePoint-bibliotheek", "Maximaal 30 privékanalen per Team", "Overweeg of een apart Team passender is bij een grote, permanente subgroep"] },
+    "r_gedeeld":{ result:true, color:"#038387", title:"Gedeeld kanaal", location:"Teams › Team › ··· › Kanaal toevoegen › type: Gedeeld", description:"Externe organisaties kunnen deelnemen zonder gastaccount in jouw tenant. Ideaal voor vaste externe partners.", tips:["Externe deelnemers werken vanuit hun eigen Microsoft Teams-omgeving", "Vraag IT of externe Teams-federatie is ingeschakeld in jullie tenant", "Gedeelde kanalen hebben beperkingen (o.a. geen vergaderingen vanuit het kanaal plannen)", "Sla geen patiëntgegevens op in gedeelde kanalen"] },
+    "r_groepschat_tip":{ result:true, color:"#107C10", title:"Groepschat (geen kanaal nodig)", location:"Teams › Chat › Nieuw chat → meerdere mensen toevoegen", description:"Voor tijdelijke samenwerking is een groepschat lichter en flexibeler dan een formeel kanaal aanmaken.", tips:["Open Teams › Chat › klik potlood-icoon › voeg meerdere namen toe", "Geef de groepschat een naam voor duidelijkheid", "Bestanden in de chat worden opgeslagen in OneDrive", "Na het project blijft de chat beschikbaar als historisch archief"] },
+    "r_extern_incidenteel":{ result:true, color:"#0078D4", title:"Teams-vergadering of e-mail", location:"Teams › Vergadering plannen, of Outlook › E-mail", description:"Voor incidenteel extern contact is een Teams-vergadering of e-mail de juiste keuze - geen kanaal nodig.", tips:["Plan een Teams-vergadering voor online overleg met externen", "Externe gasten kunnen zonder Teams-account deelnemen via de browser", "Deel documenten via een beveiligde OneDrive-link met vervaldatum"] },
+    "r_naar_team_boom":{ result:true, color:"#038387", title:"Gebruik de beslisboom 'Nieuw Team aanmaken?'", location:"Menu › Teams-structuur › Nieuw Team aanmaken?", description:"Er is eerst een Team nodig voordat je een kanaal kunt aanmaken. Gebruik de beslisboom voor Teams aanmaken.", tips:["Klik in het linkermenu op 'Nieuw Team aanmaken?'", "Controleer altijd eerst of er al een geschikt Team bestaat", "Pas na aanmaken van het Team kun je kanalen toevoegen"] }
+  }
+},
+
+"struct_team": {
+  meta:{ title:"Nieuw Team aanmaken?", subtitle:"Beoordeel of een nieuw Team nodig is en welk type", icon:"📄", iconBg:"#e1f0f1", color:"#038387", cat:"structuur" },
+  nodes:{
+    "start":{ question:"Is er al een Microsoft Team dat dit doel kan dienen?", stepLabel:"Bestaand Team", options:[
+      { label:"Ja - er is al een geschikt Team", next:"r_gebruik_bestaand" },
+      { label:"Ik weet het niet zeker", sub:"Ik heb niet goed in Teams gezocht", next:"r_zoek_eerst" },
+      { label:"Nee - er is echt niets geschikts", next:"soort_samenwk" }
+    ] },
+    "soort_samenwk":{ question:"Wat voor samenwerking is het?", stepLabel:"Type samenwerking", options:[
+      { label:"Vaste afdeling of zorgteam", sub:"Doorlopend, alle collega's van de afdeling", next:"team_afdeling" },
+      { label:"Tijdelijk project met een duidelijke einddatum", sub:"Bijv. kwaliteitsproject of implementatie", next:"team_project" },
+      { label:"Organisatiebreed - voor alle medewerkers", next:"r_orgbreed" }
+    ] },
+    "team_afdeling":{ question:"Is de informatie vertrouwelijk binnen de afdeling?", stepLabel:"Vertrouwelijkheid", options:[
+      { label:"Ja - toegang beperken tot afdelingsleden", next:"r_team_prive_afd" },
+      { label:"Nee - mag zichtbaar zijn voor de organisatie", next:"r_team_publiek" }
+    ] },
+    "team_project":{ question:"Is de einddatum bekend en duidelijk afgebakend?", stepLabel:"Looptijd", options:[
+      { label:"Ja - duidelijke einddatum (bijv. 3-12 maanden)", next:"r_team_project_tj" },
+      { label:"Nee - open einde of langdurig (1+ jaar)", next:"r_team_project_perm" }
+    ] },
+    "r_gebruik_bestaand":{ result:true, color:"#107C10", title:"Gebruik het bestaande Team", location:"Teams › Zoek het bestaande Team op", description:"Er is al een geschikt Team. Maak indien nodig een nieuw kanaal aan voor jouw onderwerp.", tips:["Navigeer naar het bestaande Team", "Voeg een nieuw kanaal toe voor jouw specifieke onderwerp", "Minder Teams = beter overzicht voor iedereen in de organisatie", "Gebruik de beslisboom 'Kanaaltype kiezen' om het juiste kanaal te bepalen"] },
+    "r_zoek_eerst":{ result:true, color:"#038387", title:"Zoek eerst goed in Teams", location:"Teams › Teams doorzoeken (zoekbalk of linkermenu)", description:"Controleer goed of er al een Team bestaat voordat je een nieuw aanvraagt. Te veel Teams leidt tot versnippering.", tips:["Klik in Teams op 'Teams' (linkerzijbalk) › zoek op naam of onderwerp", "Vraag ook collega's of je leidinggevende of er al een Team is", "Te veel Teams schaadt het overzicht - minder is beter", "Als er niets gevonden is, ga dan verder met het aanvragen van een nieuw Team"] },
+    "r_team_prive_afd":{ result:true, color:"#038387", title:"Privé Team aanmaken (afdeling)", location:"Teams › Deelnemen aan of een team maken › Team maken › Privé", description:"Maak een privé Team aan voor de afdeling. Alleen uitgenodigde leden hebben toegang.", tips:["Kies bij aanmaken 'Privé' als type", "Volg de interne procedure voor het aanvragen van een Team", "Voeg altijd minimaal twee eigenaren toe voor continuïteit", "Maak direct een logische kanalenstructuur na aanmaken (bijv. Algemeen, Roosters, Protocollen)"] },
+    "r_team_publiek":{ result:true, color:"#038387", title:"Publiek Team aanmaken", location:"Teams › Deelnemen aan of een team maken › Team maken › Publiek", description:"Een publiek Team is zichtbaar in de Teams-directory. Collega's kunnen zelf lid worden.", tips:["Kies bij aanmaken 'Publiek' als type", "Vermeld een duidelijke beschrijving zodat collega's begrijpen of ze lid moeten worden", "Wees bewust dat kanaalinhoud en bestanden zichtbaar zijn voor alle leden", "Sla nooit vertrouwelijke informatie op in een publiek Team"] },
+    "r_orgbreed":{ result:true, color:"#038387", title:"Org-breed Team - alleen via IT aanvragen", location:"Microsoft Teams-beheercentrum (admin)", description:"Een org-breed Team bevat automatisch alle medewerkers. Dit kan alleen worden aangemaakt door een Teams-beheerder.", tips:["Neem contact op met IT om een org-breed Team aan te vragen", "Er mag maar één org-breed Team per organisatie zijn (max. 10.000 leden)", "Gebruik het Algemeen-kanaal voor organisatiebrede aankondigingen", "Overweeg ook een SharePoint-communicatiesite als alternatief voor nieuwsberichten"] },
+    "r_team_project_tj":{ result:true, color:"#FFB900", title:"Tijdelijk Team voor project", location:"Teams › Deelnemen aan of een team maken → Privé", description:"Maak een tijdelijk Team aan. Plan de archivering al bij de start om na afloop niets te verliezen.", tips:["Gebruik een duidelijke naam: '[Projectnaam] [jaar]' (bijv. 'Herinrichting Afdeling B - 2026')", "Stel bij aanvang een einddatum af en plan de archiveringsstap", "Verplaats relevante documenten naar een permanente locatie vóór archivering", "Archiveer - niet verwijder - het Team na afloop; bestanden blijven dan bewaard"] },
+    "r_team_project_perm":{ result:true, color:"#038387", title:"Team aanmaken - evalueer na 6-12 maanden", location:"Teams › Deelnemen aan of een team maken → Privé", description:"Maak het Team aan maar stel een evaluatiemoment in om te beoordelen of het Team nog actief nodig is.", tips:["Maak het Team aan en voeg direct relevante kanalen toe", "Plan een evaluatiemoment (bijv. na 6 maanden) om activiteit te beoordelen", "Inactieve Teams kunnen worden gearchiveerd om de overzichtelijkheid te bewaren", "Wijs twee eigenaren aan die verantwoordelijk zijn voor het onderhoud"] }
+  }
+}
+
+};
+
+// SHADING UTIL
+// ================================================================
+function shade(hex,pct){const n=parseInt(hex.replace('#',''),16),a=Math.round(2.55*pct);const R=Math.min(255,Math.max(0,(n>>16)+a)),G=Math.min(255,Math.max(0,(n>>8&0xFF)+a)),B=Math.min(255,Math.max(0,(n&0xFF)+a));return '#'+(0x1000000+R*0x10000+G*0x100+B).toString(16).slice(1)}
+
+// ================================================================
+// STATE
+// ================================================================
+let currentTreeId = null;
+let currentNode   = 'start';
+let history       = [];
+
+// ================================================================
+// MICROSOFT FABRIC ICON MAP
+// Maps emoji (used as data keys) to Fabric icon class names.
+// ic(emoji) returns an <i class="ms-Icon ..."> element, or the
+// original emoji if no mapping exists.
+// ================================================================
+const ICON = {
+  // Storage & Files
+  '📁':'FolderHorizontal','📂':'FolderOpen','📚':'Library',
+  '📄':'Document','📋':'ClipboardList','📌':'Pin','💾':'Save',
+  '🗂️':'FolderHorizontal',
+  // Search & Navigation
+  '🔍':'Search','🔎':'Search','➡️':'ChevronRight','⏪':'Previous',
+  // Sharing & Permissions
+  '🔗':'Share','🔑':'Permissions','🔒':'Lock','🔐':'LockSolid',
+  '🚫':'Blocked2',
+  // Communication
+  '💬':'Chat','💭':'Chat','📢':'Megaphone','📣':'Megaphone',
+  '📅':'Calendar','🔔':'Ringer','📧':'Mail','📨':'Mail',
+  '📬':'Mail','📩':'InboxCheck','📎':'Attach','📞':'Phone',
+  '📱':'CellPhone','🎙️':'Microphone','🎓':'Education',
+  // People & Org
+  '👤':'Contact','👥':'People','🏢':'CityNext','🙋':'People',
+  '🤝':'People','🤷':'Unknown',
+  // Status & Actions
+  '✅':'Accept','✏️':'Edit','📝':'Edit','🆕':'Add','➕':'Add',
+  '🔁':'Sync','♾️':'Sync','⚙️':'Settings','👁️':'View','👀':'View',
+  '💡':'Lightbulb','⚡':'Lightning','⏱️':'Timer','⏳':'Clock',
+  '🕐':'Clock','🔃':'Refresh','💤':'Hide2','@':'At','❓':'Unknown',
+  // Cloud & Devices
+  '☁️':'Cloud','🌤️':'Cloud','💻':'Laptop','🖥️':'Laptop',
+  '💼':'Briefcase','🌐':'Globe','🌍':'Globe','🌉':'PlugSolid',
+  // Misc / categories
+  '🏗️':'Org','🗑️':'Delete','🔄':'History','⏪':'Previous',
+  '🔊':'Volume3','🔕':'VolumeDisabled','🔈':'Volume1',
+  '📊':'BarChart4','✨':'FavoriteStarFill','💙':'Cloud',
+  '🟣':'CircleFill','🏛️':'OfficeLogo','1️⃣':'TextField',
+  '🏟️':'People',
+};
+
+function ic(emoji, size) {
+  const name = ICON[emoji];
+  if (!name) return emoji;
+  const s = size ? ` style="font-size:${size}"` : '';
+  return `<i class="ms-Icon ms-Icon--${name}"${s}></i>`;
+}
+
+// ================================================================
+// BUILD SIDEBAR NAV
+// ================================================================
+function buildNav(){
+  const nav = document.getElementById('nav');
+  categories.forEach(cat=>{
+    const hdr = document.createElement('div');
+    hdr.className = 'cat-header';
+    hdr.innerHTML = `<div class="cat-dot" style="background:${cat.color}"></div><span style="color:rgba(255,255,255,.55)">${ic(cat.icon)} ${cat.label}</span>`;
+    nav.appendChild(hdr);
+    cat.trees.forEach(tid=>{
+      const info = treeLabels[tid];
+      const btn = document.createElement('button');
+      btn.className = 'tree-btn';
+      btn.id = 'nav-'+tid;
+      btn.innerHTML = `<span class="tree-icon">${ic(info.icon)}</span>${info.label}`;
+      btn.onclick = ()=>{ loadTree(tid); closeSidebar(); };
+      nav.appendChild(btn);
+    });
+  });
+}
+
+// ================================================================
+// LOAD TREE
+// ================================================================
+function loadTree(tid){
+  // Deactivate previous
+  if(currentTreeId) document.getElementById('nav-'+currentTreeId)?.classList.remove('active');
+  currentTreeId = tid;
+  currentNode   = 'start';
+  history       = [];
+  document.getElementById('nav-'+tid)?.classList.add('active');
+
+  const tree = trees[tid];
+  const cat  = categories.find(c=>c.trees.includes(tid));
+
+  // Update topbar
+  document.getElementById('topbar-title').textContent = treeLabels[tid].label;
+  const badge = document.getElementById('topbar-badge');
+  badge.style.display = 'inline-flex';
+  badge.style.background = cat.color;
+  badge.innerHTML = ic(cat.icon,'0.8rem') + ' ' + cat.label;
+
+  renderContent();
+}
+
+// ================================================================
+// RENDER
+// ================================================================
+function renderContent(){
+  const tree = trees[currentTreeId];
+  const node = tree.nodes[currentNode];
+
+  document.getElementById('content').innerHTML = `
+    <div class="tree-area">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon-wrap" style="background:${tree.meta.iconBg||'#EEF3FB'};color:${tree.meta.color}">${ic(tree.meta.icon)}</div>
+          <div>
+            <h2>${tree.meta.title}</h2>
+            <p>${tree.meta.subtitle}</p>
+          </div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="pfill" style="background:${tree.meta.color};width:${progressPct(node)}%"></div></div>
+        <div class="breadcrumb" id="bc" style="display:${history.length?'flex':'none'}">${buildBreadcrumb()}</div>
+        <div class="tree-content" id="tc"></div>
+      </div>
+    </div>`;
+
+  if(node.result) renderResult(node, tree.meta.color);
+  else renderQuestion(node);
+}
+
+function progressPct(node){
+  if(node.result) return 100;
+  return Math.min(history.length/5,0.88)*100;
+}
+
+function buildBreadcrumb(){
+  return history.map(h=>`
+    <div class="breadcrumb-item">
+      <span class="bc-label">${h.stepLabel}:</span>
+      <span class="bc-value" title="${h.choice}">${h.choice}</span>
+    </div>`).join('');
+}
+
+function renderQuestion(node){
+  document.getElementById('tc').innerHTML = `
+    <div class="question-wrap">
+      <div class="step-num">Stap ${history.length+1}</div>
+      <div class="question-text">${node.question}</div>
+      <div class="options">${node.options.map((o,i)=>`
+        <button class="option-btn" onclick="choose(${i})">
+          <span class="opt-icon">${o.icon ? ic(o.icon) : '<i class="ms-Icon ms-Icon--ChevronRight"></i>'}</span>
+          <span class="opt-content">
+            <span class="opt-label">${o.label}</span>
+            ${o.sub?`<span class="opt-sub">${o.sub}</span>`:''}
+          </span>
+          <span class="opt-arrow"><i class="ms-Icon ms-Icon--ChevronRight"></i></span>
+        </button>`).join('')}
+      </div>
+      ${history.length?`<div class="back-row"><button class="btn btn-secondary" onclick="goBack()"><i class="ms-Icon ms-Icon--ChevronLeft"></i> Vorige stap</button></div>`:''}
+    </div>`;
+}
+
+function renderResult(node, fallbackColor){
+  const color = node.color || fallbackColor;
+  document.getElementById('tc').innerHTML = `
+    <div class="result-wrap">
+      <div class="result-badge" style="background:${color}"><i class="ms-Icon ms-Icon--Accept"></i> Aanbeveling</div>
+      <div class="result-main" style="background:linear-gradient(135deg,${color},${shade(color,-24)})">
+        <div class="result-icon-big">${node.icon ? ic(node.icon) : '<i class="ms-Icon ms-Icon--Accept"></i>'}</div>
+        <div class="result-info">
+          <h3>${node.title}</h3>
+          <p>${node.description}</p>
+        </div>
+      </div>
+      ${node.tips?`
+      <div class="tips" style="border-left:4px solid ${color}">
+        <h4><i class="ms-Icon ms-Icon--Lightbulb"></i> Zo pak je het aan</h4>
+        <ul>${node.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
+      </div>`:''}
+      ${node.location?`
+      <div class="location-strip">
+        <i class="ms-Icon ms-Icon--Location"></i>
+        <div><strong>Locatie in Microsoft 365:</strong> ${node.location}</div>
+      </div>`:''}
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="resetTree()"><i class="ms-Icon ms-Icon--Refresh"></i> Opnieuw beginnen</button>
+        ${history.length?`<button class="btn btn-secondary" onclick="goBack()"><i class="ms-Icon ms-Icon--ChevronLeft"></i> Vorige stap</button>`:''}
+      </div>
+    </div>`;
+}
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+function choose(i){
+  const node = trees[currentTreeId].nodes[currentNode];
+  const opt  = node.options[i];
+  history.push({ node:currentNode, stepLabel:node.stepLabel||'Keuze', choice:opt.label });
+  currentNode = opt.next;
+  renderContent();
+  document.querySelector('.main').scrollTo({top:0,behavior:'smooth'});
+}
+function goBack(){
+  if(!history.length) return;
+  currentNode = history.pop().node;
+  renderContent();
+}
+function resetTree(){
+  history=[]; currentNode='start'; renderContent();
+  document.querySelector('.main').scrollTo({top:0,behavior:'smooth'});
+}
+
+// ================================================================
+// SIDEBAR TOGGLE
+// ================================================================
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+// ================================================================
+// WELCOME SCREEN
+// ================================================================
+function goHome(){
+  if(currentTreeId){ document.getElementById('nav-'+currentTreeId)?.classList.remove('active'); currentTreeId=null; }
+  document.getElementById('topbar-title').textContent='Kies een onderwerp';
+  document.getElementById('topbar-badge').style.display='none';
+  showWelcome();
+  closeSidebar();
+}
+function showWelcome(){
+  const cards = categories.flatMap(cat=>
+    cat.trees.map(tid=>({tid, cat,
+      icon:treeLabels[tid].icon,
+      label:treeLabels[tid].label,
+      color:cat.color
+    }))
+  );
+  document.getElementById('content').innerHTML = `
+    <div class="welcome">
+      <h2>Welkom — kies een onderwerp</h2>
+      <p>Kies een beslisboom via het menu links, of klik op een onderwerp hieronder.<br>
+      Elke boom begeleidt je stap voor stap naar het juiste antwoord voor jouw situatie.</p>
+      <div class="welcome-grid">
+        ${cards.map(c=>`
+          <div class="welcome-card" onclick="loadTree('${c.tid}')" style="border-top:3px solid ${c.color}">
+            <div class="wc-icon">${ic(c.icon)}</div>
+            <div class="wc-title">${c.label}</div>
+            <div class="wc-sub" style="color:${c.color}">${c.cat.label}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+// ================================================================
+// INIT
+// ================================================================
+buildNav();
+showWelcome();
+</script>
+</body>
+</html>
