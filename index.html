@@ -281,7 +281,8 @@ const categories = [
   { id:"samenwerken", label:"Samenwerken in Teams", icon:"Teamwork", color:"#6264A7", trees:["samen_document", "samen_delen"] },
   { id:"privacy", label:"Privacy & AVG", icon:"Shield", color:"#D83B01", trees:["privacy_mag_ik", "privacy_extern"] },
   { id:"structuur", label:"Teams-structuur", icon:"Org", color:"#038387", trees:["struct_kanaal", "struct_team"] },
-  { id:"herstel", label:"Versies & Herstel", icon:"History", color:"#107C10", trees:["herstel_bestand", "herstel_versies"] }
+  { id:"herstel", label:"Versies & Herstel", icon:"History", color:"#107C10", trees:["herstel_bestand", "herstel_versies"] },
+  { id:"taken", label:"Taken & Planning", icon:"TaskManager", color:"#5C2E91", trees:["taken_keuze", "taken_todo", "taken_planner"] }
 ];
 
 const treeLabels = {
@@ -296,11 +297,14 @@ const treeLabels = {
   "samen_document": { icon:"PageEdit", label:"Samen aan een document werken" },
   "samen_delen": { icon:"Share", label:"Document intern of extern delen" },
   "struct_kanaal": { icon:"Sections", label:"Kanaaltype kiezen" },
-  "struct_team": { icon:"AddGroup", label:"Nieuw Team aanmaken?" }
+  "struct_team": { icon:"AddGroup", label:"Nieuw Team aanmaken?" },
+  "taken_keuze": { icon:"DecisionSolid", label:"To Do of Planner?" },
+  "taken_todo": { icon:"CheckList", label:"Persoonlijke taken in To Do" },
+  "taken_planner": { icon:"BacklogBoard", label:"Teamtaken in Planner" }
 };
 
 // ================================================================
-// ALL TREES  (generated 2026-06-10)
+// ALL TREES  (generated 2026-06-18)
 // ================================================================
 const trees = {
 
@@ -677,6 +681,89 @@ const trees = {
     "r_orgbreed":{ result:true, color:"#038387", title:"Org-breed Team - alleen via IT aanvragen", location:"Microsoft Teams-beheercentrum (admin)", description:"Een org-breed Team bevat automatisch alle medewerkers. Dit kan alleen worden aangemaakt door een Teams-beheerder.", tips:["Neem contact op met IT om een org-breed Team aan te vragen", "Er mag maar één org-breed Team per organisatie zijn (max. 10.000 leden)", "Gebruik het Algemeen-kanaal voor organisatiebrede aankondigingen", "Overweeg ook een SharePoint-communicatiesite als alternatief voor nieuwsberichten"] },
     "r_team_project_tj":{ result:true, color:"#FFB900", title:"Tijdelijk Team voor project", location:"Teams › Deelnemen aan of een team maken → Privé", description:"Maak een tijdelijk Team aan. Plan de archivering al bij de start om na afloop niets te verliezen.", tips:["Gebruik een duidelijke naam: '[Projectnaam] [jaar]' (bijv. 'Herinrichting Afdeling B - 2026')", "Stel bij aanvang een einddatum af en plan de archiveringsstap", "Verplaats relevante documenten naar een permanente locatie vóór archivering", "Archiveer - niet verwijder - het Team na afloop; bestanden blijven dan bewaard"] },
     "r_team_project_perm":{ result:true, color:"#038387", title:"Team aanmaken - evalueer na 6-12 maanden", location:"Teams › Deelnemen aan of een team maken → Privé", description:"Maak het Team aan maar stel een evaluatiemoment in om te beoordelen of het Team nog actief nodig is.", tips:["Maak het Team aan en voeg direct relevante kanalen toe", "Plan een evaluatiemoment (bijv. na 6 maanden) om activiteit te beoordelen", "Inactieve Teams kunnen worden gearchiveerd om de overzichtelijkheid te bewaren", "Wijs twee eigenaren aan die verantwoordelijk zijn voor het onderhoud"] }
+  }
+},
+
+"taken_keuze": {
+  meta:{ title:"To Do of Planner?", subtitle:"Kies de juiste takentool voor persoonlijk werk en teamwerk", icon:"DecisionSolid", iconBg:"#ebe6f2", color:"#5C2E91", cat:"taken" },
+  nodes:{
+    "start":{ question:"Voor wie zijn de taken bedoeld?", stepLabel:"Doelgroep", options:[
+      { label:"Alleen voor mijzelf", sub:"Persoonlijke to-do's en herinneringen", next:"persoonlijk" },
+      { label:"Voor mijn team of een project", sub:"Gedeelde taken met status en verdeling", next:"team" },
+      { label:"Eén taak die ik aan een collega geef", sub:"Een gericht verzoek aan één persoon", next:"toewijzen" },
+      { label:"Een patiëntgebonden taak of actie", sub:"Controle, medicatie, vervolgafspraak", next:"r_patient_taak" }
+    ] },
+    "persoonlijk":{ question:"Waar komen de taken vandaan?", stepLabel:"Herkomst", options:[
+      { label:"Losse to-do's en dagelijkse herinneringen", sub:"Ik typ ze zelf in", next:"r_todo_persoonlijk" },
+      { label:"Ze komen uit e-mail of Teams-berichten", sub:"Opvolgacties uit Outlook of Teams", next:"r_todo_gekoppeld" },
+      { label:"Het zijn taken uit een teamproject", sub:"Aan mij toegewezen in Planner", next:"r_planner_via_todo" }
+    ] },
+    "team":{ question:"Hoe gestructureerd is het werk?", stepLabel:"Structuur", options:[
+      { label:"Gedeelde takenlijst met status en verdeling", sub:"Wie doet wat, en hoe ver is het?", next:"planner_omgeving" },
+      { label:"Snelle gezamenlijke checklist, ad hoc", sub:"Even samen afvinken, geen vast plan", next:"r_loop_of_lists" },
+      { label:"Groot project met planning en afhankelijkheden", sub:"Tijdlijn, mijlpalen, meerdere fasen", next:"r_planner_premium" }
+    ] },
+    "planner_omgeving":{ question:"Waar werkt het team al samen?", stepLabel:"Werkomgeving", options:[
+      { label:"We hebben al een Microsoft Team", sub:"Plan koppelen aan een kanaal", next:"r_planner_in_teams" },
+      { label:"Nog geen Team - liever in de browser", sub:"Los plan via de Planner-webapp", next:"r_planner_web" }
+    ] },
+    "toewijzen":{ question:"Moet de voortgang zichtbaar zijn voor het hele team?", stepLabel:"Zichtbaarheid", options:[
+      { label:"Ja - het team moet de status kunnen volgen", sub:"Onderdeel van gezamenlijk werk", next:"r_planner_in_teams" },
+      { label:"Nee - gewoon een verzoek aan één persoon", sub:"Eenmalige actie, informeel", next:"r_taak_collega" }
+    ] },
+    "r_todo_persoonlijk":{ result:true, color:"#2564CF", title:"Microsoft To Do - persoonlijke taken", location:"To Do (app of to-do.office.com) › Mijn dag / Taken", description:"Gebruik Microsoft To Do voor je eigen taken, herinneringen en dagelijkse planning. Alleen jij ziet deze lijst.", tips:["Open To Do via de app, in Teams of via to-do.office.com", "Gebruik 'Mijn dag' om elke ochtend je focus voor vandaag te kiezen", "Markeer belangrijke taken met een ster zodat ze in 'Belangrijk' verschijnen", "Voeg geen patiëntnamen of medische details toe aan taaktitels - houd ze algemeen"] },
+    "r_todo_gekoppeld":{ result:true, color:"#2564CF", title:"Microsoft To Do - acties uit e-mail en Teams", location:"To Do › Gemarkeerde e-mail, of Outlook/Teams › markeren", description:"Opvolgacties uit Outlook en Teams kun je bundelen in To Do, zodat je niets vergeet.", tips:["Markeer een e-mail in Outlook met een vlag - deze verschijnt automatisch in de lijst 'Gemarkeerde e-mail' in To Do", "Vink je de taak af in To Do, dan verdwijnt de vlag ook in Outlook", "Bewaar belangrijke Teams-berichten (··· › Opslaan) en maak er een eigen taak van", "Zet gevoelige inhoud niet in de taaktitel - verwijs in plaats daarvan naar het bericht"] },
+    "r_planner_via_todo":{ result:true, color:"#2564CF", title:"To Do - lijst 'Toegewezen aan mij'", location:"To Do › Toegewezen aan mij (of Planner › Mijn taken)", description:"Taken die in Planner aan jou zijn toegewezen, verschijnen automatisch in To Do onder 'Toegewezen aan mij'. Zo zie je al je werk op één plek.", tips:["Schakel de lijst 'Toegewezen aan mij' in via To Do › Instellingen als die nog verborgen is", "Je beheert hier je eigen Planner-taken zonder steeds naar Planner te hoeven", "Het overzicht 'Mijn taken' in de Planner-app combineert To Do, gemarkeerde e-mail én Planner-taken", "Wijzigingen die je hier maakt zijn ook zichtbaar in het oorspronkelijke plan"] },
+    "r_loop_of_lists":{ result:true, color:"#6264A7", title:"Snelle checklist via Loop of Lists in Teams", location:"Teams-kanaal › + › Lists, of een Loop-component in een bericht", description:"Voor een lichte, gezamenlijke checklist is een volledig Planner-plan vaak te zwaar. Gebruik een Loop-component of een Lists-lijst.", tips:["Voeg een Loop-component (taaklijst) toe in een Teams-chat of -kanaal - iedereen vinkt live mee af", "Gebruik de Lists-app voor een gestructureerde lijst met kolommen (status, eigenaar, datum)", "Wordt de checklist groter of structureel? Stap dan over op een Planner-plan", "Zet geen patiëntgegevens in een gedeelde checklist"] },
+    "r_planner_premium":{ result:true, color:"#31752F", title:"Planner (premium) voor grotere projecten", location:"Planner › Nieuw plan › premiumfuncties (tijdlijn, doelen)", description:"Voor projecten met planning, mijlpalen en afhankelijkheden bieden de premiumfuncties van Planner (voorheen Project) een tijdlijn- en sprintweergave.", tips:["Maak een premium-plan aan voor een Gantt-/tijdlijnweergave met afhankelijkheden tussen taken", "Premiumfuncties vereisen een Planner Plan 1- of Project-licentie - vraag IT of die beschikbaar is", "Gebruik doelen (Goals) om voortgang op programmaniveau te volgen", "Voor eenvoudige teamtaken zonder planning volstaat een gewoon (basis) plan"] },
+    "r_planner_in_teams":{ result:true, color:"#31752F", title:"Planner als tabblad in een Teams-kanaal", location:"Teams › [Kanaal] › + (tabblad toevoegen) › Planner", description:"Koppel een plan aan een Teams-kanaal zodat alle teamleden de taken zien, oppakken en bijwerken op de plek waar ze al samenwerken.", tips:["Ga naar het kanaal › klik '+' bovenaan › kies 'Planner' › 'Nieuw plan maken'", "Het plan hoort automatisch bij de Microsoft 365-groep van het Team", "Iedereen in het Team kan taken zien en bijwerken - geen aparte uitnodiging nodig", "Plaats geen patiëntidentificerende gegevens in taaktitels of notities"] },
+    "r_planner_web":{ result:true, color:"#31752F", title:"Planner via de webapp", location:"planner.cloud.microsoft (of Planner in Teams › Mijn plannen)", description:"Geen Team nodig? Maak een los plan in de Planner-webapp. Je kunt het later alsnog aan een Team koppelen.", tips:["Open de Planner-app in Teams of ga naar planner.cloud.microsoft", "Klik 'Nieuw plan' en geef het een duidelijke naam", "Voeg leden toe om samen te werken - er wordt een Microsoft 365-groep aangemaakt", "Wil je het plan in Teams tonen? Voeg het later toe als tabblad in een kanaal"] },
+    "r_taak_collega":{ result:true, color:"#2564CF", title:"Gedeelde To Do-lijst of korte opdracht", location:"To Do › Lijst delen, of een Teams-bericht met @vermelding", description:"Voor een enkele taak aan één collega is een volledig Planner-plan overbodig. Gebruik een gedeelde To Do-lijst of vraag het direct in Teams.", tips:["Deel een To Do-lijst en wijs daarin een taak aan je collega toe", "Voor een snelle, eenmalige vraag: stuur een Teams-bericht met @vermelding en een duidelijke deadline", "Wordt het terugkerend of teambreed? Maak dan een plan in Planner aan", "Leg afspraken met bewijslast vast per e-mail (zie de beslisboom 'Mail of Teams-bericht?')"] },
+    "r_patient_taak":{ result:true, color:"#A4262C", title:"STOP - patiëntgebonden taken horen in het EPD", location:"EPD / Zorgdossier (taken- of worklist-module)", description:"Klinische taken rond een patiënt (controle, medicatie, vervolgafspraak) horen in de takenmodule van het EPD - niet in To Do of Planner.", tips:["Gebruik de taken-/worklistfunctie van het EPD voor patiëntgebonden acties", "Zet nooit namen, BSN, diagnoses of medicatie in een Planner- of To Do-taak", "Algemene, niet-herleidbare werktaken (bijv. 'voorraad bestellen') mogen wél in Planner/To Do", "Twijfel je of iets herleidbaar is? Raadpleeg de Functionaris Gegevensbescherming (FG)"] }
+  }
+},
+
+"taken_todo": {
+  meta:{ title:"Persoonlijke taken in To Do", subtitle:"Persoonlijke taken, herinneringen en gekoppelde acties", icon:"CheckList", iconBg:"#ebe6f2", color:"#5C2E91", cat:"taken" },
+  nodes:{
+    "start":{ question:"Wat wil je doen?", stepLabel:"Actie", options:[
+      { label:"Een nieuwe taak of herinnering toevoegen", next:"toevoegen" },
+      { label:"Een e-mail omzetten in een taak", sub:"Opvolgactie uit Outlook", next:"r_email_taak" },
+      { label:"Een aan mij toegewezen taak terugzien", sub:"Taak uit Planner of Teams", next:"r_todo_toegewezen" },
+      { label:"Mijn taken ordenen in lijsten", sub:"Structuur aanbrengen", next:"r_lijsten" }
+    ] },
+    "toevoegen":{ question:"Heeft de taak een tijdsaspect?", stepLabel:"Timing", options:[
+      { label:"Ja - een vaste deadline of herinnering", sub:"Op datum en/of tijd", next:"r_taak_deadline" },
+      { label:"Nee - gewoon iets wat ik moet doen", sub:"Zonder vaste datum", next:"r_taak_simpel" },
+      { label:"Het is een terugkerende taak", sub:"Dagelijks, wekelijks, etc.", next:"r_taak_herhaling" }
+    ] },
+    "r_taak_simpel":{ result:true, color:"#2564CF", title:"Taak toevoegen aan je lijst", location:"To Do › Taken › 'Een taak toevoegen'", description:"Voeg de taak snel toe aan je lijst. Sleep hem naar 'Mijn dag' als je hem vandaag wilt oppakken.", tips:["Typ de taak in het vak 'Een taak toevoegen' en druk op Enter", "Voeg stappen (subtaken), notities of een bestand toe door op de taak te klikken", "Sleep de taak naar 'Mijn dag' voor je dagplanning", "Houd taaktitels algemeen - geen patiëntgegevens"] },
+    "r_taak_deadline":{ result:true, color:"#2564CF", title:"Taak met deadline en herinnering", location:"To Do › Taak › 'Herinner mij' / 'Vervaldatum toevoegen'", description:"Geef de taak een vervaldatum en stel een herinnering in zodat je op tijd een melding krijgt.", tips:["Open de taak en kies 'Vervaldatum toevoegen' en/of 'Herinner mij'", "Herinneringen verschijnen als melding op je telefoon en computer", "Taken met een datum komen samen in de lijst 'Gepland'", "Stel de herinnering ruim vóór de echte deadline in als voorbereiding nodig is"] },
+    "r_taak_herhaling":{ result:true, color:"#2564CF", title:"Terugkerende taak instellen", location:"To Do › Taak › 'Herhalen'", description:"Stel een herhaling in voor taken die regelmatig terugkomen, zoals een wekelijkse controle of een maandelijkse rapportage.", tips:["Open de taak › kies 'Herhalen' › selecteer het patroon (dagelijks, wekelijks, maandelijks of aangepast)", "Na het afvinken verschijnt de taak automatisch opnieuw op de volgende datum", "Handig voor vaste routines - niet voor patiëntgebonden controles (die horen in het EPD)", "Combineer met een herinnering zodat je de terugkerende taak niet mist"] },
+    "r_email_taak":{ result:true, color:"#0078D4", title:"E-mail omzetten in een taak", location:"Outlook › e-mail markeren met vlag (verschijnt in To Do)", description:"Markeer een e-mail in Outlook met een vlag; deze verschijnt automatisch in de lijst 'Gemarkeerde e-mail' in To Do.", tips:["Klik in Outlook op het vlagpictogram bij de e-mail", "Open To Do › lijst 'Gemarkeerde e-mail' om de opvolgactie te zien", "Vink je de taak af in To Do, dan verdwijnt de vlag ook in Outlook", "Je kunt de e-mailtaak een vervaldatum geven en aan 'Mijn dag' toevoegen"] },
+    "r_todo_toegewezen":{ result:true, color:"#2564CF", title:"Lijst 'Toegewezen aan mij'", location:"To Do › Toegewezen aan mij", description:"Taken die collega's in Planner aan jou toewijzen, komen automatisch in deze lijst. Zo mis je geen teamtaken.", tips:["Open de lijst 'Toegewezen aan mij' in de linkerbalk van To Do", "Werk je de taak hier bij, dan is dat ook zichtbaar in het Planner-plan", "Het overzicht 'Mijn taken' in de Planner-app bundelt deze taken met je To Do-taken", "Staat de lijst er niet? Schakel hem in via Instellingen › Lijsten"] },
+    "r_lijsten":{ result:true, color:"#2564CF", title:"Taken ordenen in lijsten en groepen", location:"To Do › '+ Nieuwe lijst' (en lijsten groeperen)", description:"Maak aparte lijsten per thema (bijv. 'Administratie' of 'Opleiding') en groepeer ze voor overzicht. Lijsten kun je ook delen.", tips:["Klik op '+ Nieuwe lijst' en geef de lijst een duidelijke naam", "Sleep lijsten samen in een groep om ze overzichtelijk te houden", "Deel een lijst via het deelpictogram als je samen met een collega aan taken werkt", "Gedeelde lijsten zijn niet bedoeld voor patiëntgegevens of vertrouwelijke informatie"] }
+  }
+},
+
+"taken_planner": {
+  meta:{ title:"Teamtaken in Planner", subtitle:"Gedeelde taken, buckets en voortgang voor je team", icon:"BacklogBoard", iconBg:"#ebe6f2", color:"#5C2E91", cat:"taken" },
+  nodes:{
+    "start":{ question:"Wat wil je doen?", stepLabel:"Actie", options:[
+      { label:"Een nieuw plan opzetten voor het team", next:"nieuw_plan" },
+      { label:"Taken verdelen en toewijzen", sub:"Wie doet wat, met welke datum", next:"r_toewijzen" },
+      { label:"Voortgang en overzicht bekijken", sub:"Status, grafieken, planning", next:"r_overzicht" },
+      { label:"Een plan tonen in een Teams-kanaal", sub:"Planner als tabblad", next:"r_tab_teams" }
+    ] },
+    "nieuw_plan":{ question:"Hoort het plan bij een bestaand Team?", stepLabel:"Koppeling", options:[
+      { label:"Ja - bij een bestaand Team en kanaal", sub:"Team werkt al samen in Teams", next:"r_plan_in_teams" },
+      { label:"Nee - een los plan", sub:"Nog geen Team, of in de browser", next:"r_plan_web" }
+    ] },
+    "r_plan_in_teams":{ result:true, color:"#31752F", title:"Plan aanmaken in een Teams-kanaal", location:"Teams › [Kanaal] › + (tabblad) › Planner › Nieuw plan", description:"Maak het plan aan als tabblad in het juiste kanaal. Het plan is dan gekoppeld aan het Team en zichtbaar voor alle leden.", tips:["Klik in het kanaal op '+' › kies 'Planner' › 'Nieuw plan maken'", "Het plan hoort automatisch bij de Microsoft 365-groep van het Team", "Alle teamleden kunnen taken zien, oppakken en de status bijwerken", "Gebruik buckets (kolommen) om taken te ordenen, bijv. per fase of per onderwerp"] },
+    "r_plan_web":{ result:true, color:"#31752F", title:"Los plan via de Planner-webapp", location:"planner.cloud.microsoft › Nieuw plan", description:"Maak een zelfstandig plan zonder bestaand Team. Voeg leden toe om samen te werken; later kun je het in Teams tonen.", tips:["Open de Planner-app (in Teams of via planner.cloud.microsoft) › 'Nieuw plan'", "Geef het plan een herkenbare naam, bijv. 'Kwaliteitsproject 2026'", "Voeg leden toe - er wordt automatisch een Microsoft 365-groep aangemaakt", "Koppel het plan later aan een Teams-kanaal als tabblad voor meer overzicht"] },
+    "r_toewijzen":{ result:true, color:"#31752F", title:"Taken verdelen, labelen en plannen", location:"Planner › Plan › Taak › Toewijzen / Vervaldatum / Labels", description:"Wijs elke taak toe aan een teamlid, geef een vervaldatum en gebruik labels en buckets om het werk overzichtelijk te verdelen.", tips:["Klik op een taak en kies 'Toewijzen' om er één of meer collega's aan te koppelen", "Geef een begin- en vervaldatum en stel de voortgang in (Niet gestart / Bezig / Voltooid)", "Gebruik gekleurde labels om taken te categoriseren (bijv. 'urgent' of 'wacht op')", "Toegewezen taken verschijnen bij de collega in To Do onder 'Toegewezen aan mij'"] },
+    "r_overzicht":{ result:true, color:"#31752F", title:"Voortgang bekijken via de weergaven", location:"Planner › Plan › Bord / Grafieken / Planning", description:"Planner biedt meerdere weergaven om grip te houden: het Bord per bucket, Grafieken voor voortgang en de Planning-/kalenderweergave.", tips:["Bord: sleep taken tussen buckets en zie in één oogopslag de status", "Grafieken: zie voortgang per bucket, per lid en per status", "Planning: bekijk taken in een kalender op vervaldatum", "Gebruik 'Mijn taken' in de Planner-app voor jouw eigen taken uit alle plannen"] },
+    "r_tab_teams":{ result:true, color:"#6264A7", title:"Bestaand plan toevoegen als Teams-tabblad", location:"Teams › [Kanaal] › + (tabblad) › Planner › Bestaand plan gebruiken", description:"Toon een bestaand plan in een Teams-kanaal zodat het team de taken ziet op de plek waar het samenwerkt.", tips:["Klik in het kanaal op '+' › kies 'Planner' › 'Een bestaand plan gebruiken'", "Het plan moet bij dezelfde Microsoft 365-groep horen om het te kunnen kiezen", "Geef het tabblad een duidelijke naam zodat collega's het herkennen", "Plaats nooit patiëntidentificerende gegevens in taaktitels of notities"] }
   }
 }
 
